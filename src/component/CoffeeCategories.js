@@ -1,7 +1,9 @@
 import React from 'react';
 import styled from 'styled-components';
+
 import coffeeImage from './img/coffee.webp'; // Adjust the import path as necessary
 import Brazil from './img/Brazil.png'; // Placeholder path, replace with your actual icon
+import Colombia from './img/Colombia.png';
 
 const Icon = styled.img`
   width: 50px; /* Adjust size as needed */
@@ -78,7 +80,12 @@ const DescriptionBox = styled.div`
   line-height: 1.6; /* Improves readability */
 `;
 
-
+const IconContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  gap: 20px; // Adjust the gap as needed
+  margin-bottom: 20px;
+`;
 
 const products = [
   {
@@ -133,7 +140,10 @@ const CoffeeCategories = () => {
       <p>Det er riktig og rettferdig å betale godt for god kvalitet, og det er mer konstruktivt og langsiktig enn å drive veldedighet. Vi arbeider hver dag for å heve interessen for kvaliteten på produktene som vi er så glade i og kanskje aldri så lite avhengige av.</p>
       <p>Den Gyldne Bønne as samarbeider med Høl i CVen, og foruten å levere kaffen, bistår vi med vederlagsfri opplæring av deltakerne i programmet.</p>
       <p>Med hilsen, Jørgen Lindvik, Daglig leder Den Gyldne Bønne AS.</p>
-        <Icon src={Brazil} alt="Brazil" />
+      <IconContainer>
+          <Icon src={Colombia} alt="Colombia" />
+          <Icon src={Brazil} alt="Brazil" />
+        </IconContainer>
       </DescriptionBox>
 
       <Title>Våre Produkter</Title>

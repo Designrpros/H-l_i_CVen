@@ -17,9 +17,9 @@ function Home() {
       <HeroSection />
       <AboutSection />
       <CoffeeCategories />
-      <GallerySection id="gallery"/>
+      <GallerySection />
       <CooperationSection />
-      <ContactSection id="contact"/>
+      <ContactSection />
       <Footer />
     </div>
   );
