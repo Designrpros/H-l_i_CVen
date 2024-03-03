@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import Slider from 'react-slick';
-import logoImage from './img/HØL_I_CVEN_GRØNN.png'; // Ensure the path is correct
+import logoImage from './img/HØL_I_CVEN_GRØNN.png';
 
 // Importing all images for the slider
 import image2 from './img/Truck.webp';
