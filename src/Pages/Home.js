@@ -5,7 +5,7 @@ import CoffeeCategories from '../component/CoffeeCategories';
 import ProductShowcase from '../component/ProductShowcase';
 import GallerySection from '../component/GallerySection';
 import CooperationSection from '../component/CooperationSection';
-import ContactSection from '../component/ContactSection'; // Adjust the import path as necessary
+import ContactSection from '../component/ContactSection';
 
 import Footer from '../component/Footer';
 
