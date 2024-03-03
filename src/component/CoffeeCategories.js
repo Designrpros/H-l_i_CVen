@@ -122,7 +122,7 @@ const products = [
 
 const CoffeeCategories = () => {
   return (
-    <SectionWrapper>
+    <SectionWrapper id="sustainable-coffee">
       <Title>BÆREDYKTIG KAFFE</Title>
       {/* DescriptionBox and its content remain unchanged */}
       <DescriptionBox>

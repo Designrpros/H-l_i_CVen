@@ -29,7 +29,7 @@ const Highlight = styled.span`
 `;
 
 const AboutSection = () => (
-  <AboutWrapper>
+  <AboutWrapper id="who-we-are">
     <Heading>HVEM ER VI</Heading>
     <Text>
       <Highlight>Det finnes ulike grunner til at mennesker får hull i cven:</Highlight> sykdom, vanskelig oppvekst, mobbing, konsetrasjonsvansker og nedbemanning nå som korona pandemien setter ut mange av jobb. Alle mennesker har ulike ressurser som kan komme dem tilnytte om man gir dem sjansen.

@@ -13,7 +13,7 @@ const images = [
 
 const GallerySection = () => {
   return (
-    <GalleryContainer>
+    <GalleryContainer id="gallery">
       {images.map((image, index) => (
         <GalleryImage key={index} src={image.src} alt={image.alt} />
       ))}

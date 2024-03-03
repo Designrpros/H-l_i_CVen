@@ -53,24 +53,27 @@ const MobileIcon = styled.div`
 `;
 
 const MobileMenu = styled.div`
-  display: none;
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 56px; // Adjust based on your navbar height
+  left: 0;
+  width: 100%;
+  background: white;
+  padding: 20px;
+  box-sizing: border-box;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2); // Adds a subtle shadow for depth
+  z-index: 100; // Ensure it's above other content
 
-  @media (max-width: 768px) {
-    display: flex;
-    flex-direction: column;
-    position: absolute;
-    top: 56px; // Adjust based on your navbar height
-    left: 0;
-    width: 100%;
-    background: white;
-    padding: 10px 20px;
-    box-sizing: border-box;
-
-    a {
-      margin: 10px 0;
-    }
+  a {
+    color: #333; // Dark color for elegance
+    text-decoration: none; // Removes underline
+    margin: 10px 0;
+    font-size: 1.2rem; // Larger font size
+    font-family: 'Playfair Display', serif; // Sexy font
   }
 `;
+
 
 const Toolbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -82,31 +85,30 @@ const Toolbar = () => {
   return (
     <Nav>
       <Logo>
-        <a href="/">
+        <a href="#home">
           <img src={logo} alt="Logo" />
         </a>
       </Logo>
       <NavigationItems>
-        <a href="/">Hjem</a>
-        <a href="/who-we-are">Hvem er vi</a>
-        <a href="/what-we-do">Hva gjør vi</a>
-        <a href="/sustainable-coffee">Bærekraftig kaffe</a>
-        <a href="/gallery">Galleri</a>
-        <a href="/contact">Kontakt</a>
+        <a href="#home">Hjem</a>
+        <a href="#who-we-are">Hvem er vi</a>
+        <a href="#sustainable-coffee">Bærekraftig kaffe</a>
+        <a href="#gallery">Galleri</a>
+        <a href="#contact">Kontakt</a>
       </NavigationItems>
       <MobileIcon onClick={toggleMobileMenu}>☰</MobileIcon>
       {isMobileMenuOpen && (
         <MobileMenu>
-          <a href="/">Hjem</a>
-          <a href="/who-we-are">Hvem er vi</a>
-          <a href="/what-we-do">Hva gjør vi</a>
-          <a href="/sustainable-coffee">Bærekraftig kaffe</a>
-          <a href="/gallery">Galleri</a>
-          <a href="/contact">Kontakt</a>
+          <a href="#home">Hjem</a>
+          <a href="#who-we-are">Hvem er vi</a>
+          <a href="#sustainable-coffee">Bærekraftig kaffe</a>
+          <a href="#gallery">Galleri</a>
+          <a href="#contact">Kontakt</a>
         </MobileMenu>
       )}
     </Nav>
   );
 };
+
 
 export default Toolbar;

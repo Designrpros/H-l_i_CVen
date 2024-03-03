@@ -45,7 +45,7 @@ const ImageSlider = styled(Slider)`
 
 const HeroSection = () => {
   return (
-    <HeroWrapper>
+    <HeroWrapper id="home">
       <Logo src={logoImage} alt="HØL I CVEN" />
       <h4>Knallgod kaffe med mening</h4>
       <ImageSlider {...sliderSettings}>

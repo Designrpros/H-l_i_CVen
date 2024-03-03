@@ -6,6 +6,7 @@ import ProductShowcase from '../component/ProductShowcase';
 
 import GallerySection from '../component/GallerySection';
 import CooperationSection from '../component/CooperationSection';
+import ContactSection from '../component/ContactSection'; // Adjust the import path as necessary
 
 import Footer from '../component/Footer';
 
@@ -15,9 +16,10 @@ function Home() {
     <div>
       <HeroSection />
       <AboutSection />
-      <CoffeeCategories/>
-      <GallerySection />
+      <CoffeeCategories />
+      <GallerySection id="gallery"/>
       <CooperationSection />
+      <ContactSection id="contact"/>
       <Footer />
     </div>
   );
