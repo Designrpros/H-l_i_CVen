@@ -1,5 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faFacebookF, faInstagram } from '@fortawesome/free-brands-svg-icons';
+
 
 const Section = styled.section`
   background-color: #9dd2ac;
@@ -43,6 +46,19 @@ const StyledIframe = styled.iframe`
   height: 100%;
   border: 0;
 `;
+
+const IconContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-top: 20px;
+`;
+
+const IconLink = styled.a`
+  color: inherit; // Adjust as needed
+`;
+
+
 const ContactSection = () => {
   return (
     <Section id="contact">
@@ -52,6 +68,14 @@ const ContactSection = () => {
         <p>Email: contact@example.com</p>
         <p>Telefon: +47 90258682</p>
       </ContactInfo>
+      <IconContainer>
+        <IconLink href="https://www.facebook.com/holivcen/" target="_blank" rel="noopener noreferrer">
+          <FontAwesomeIcon icon={faFacebookF} size="2x" />
+        </IconLink>
+        <IconLink href="https://www.instagram.com/holicven/" target="_blank" rel="noopener noreferrer">
+          <FontAwesomeIcon icon={faInstagram} size="2x" />
+        </IconLink>
+      </IconContainer>
       <MapContainer>
         <StyledIframe
           title="Sandvika, Norway"
