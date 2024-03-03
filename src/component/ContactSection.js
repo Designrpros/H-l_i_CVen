@@ -7,8 +7,7 @@ const Section = styled.section`
 `;
 
 const SectionTitle = styled.h2`
-  margin-bottom: 30px;
-
+  margin-bottom: 5px;
   padding: 50px 0px ;
   font-size: 2.5rem;
   color: #333;
@@ -22,75 +21,6 @@ const MessageText = styled.p`
   margin-left: auto;
   margin-right: auto;
 `;
-
-const Input = styled.input`
-  width: 100%;
-  padding: 10px;
-  margin-bottom: 20px;
-  border: 1px solid #ccc;
-  border-radius: 0; /* Updated for no border radius */
-  box-sizing: border-box; /* Ensures padding doesn't add to the width */
-
-  @media (max-width: 768px) {
-    padding: 8px; /* Slightly smaller padding on smaller screens */
-  }
-`;
-
-const TextArea = styled.textarea`
-  width: 100%;
-  padding: 10px;
-  margin-bottom: 20px;
-  border: 1px solid #ccc;
-  border-radius: 0; /* Updated for no border radius */
-  height: 150px;
-  box-sizing: border-box; /* Ensures padding doesn't add to the width */
-
-  @media (max-width: 768px) {
-    padding: 8px; /* Slightly smaller padding on smaller screens */
-    height: 120px; /* Slightly smaller height on smaller screens */
-  }
-`;
-
-const Form = styled.form`
-  max-width: 500px;
-  margin: 0 auto;
-  width: 100%; /* Ensures the form is responsive */
-
-  @media (max-width: 768px) {
-    padding: 0 10px; /* Adds padding on smaller screens to prevent form touching the screen edges */
-  }
-`;
-
-const SubmitButton = styled.button`
-  position: relative;
-  background-color: black;
-  color: white;
-  padding: 10px 20px;
-  border: none;
-  cursor: pointer;
-  font-size: 1rem;
-  border-radius: 0; /* No border radius */
-  overflow: hidden; /* Ensures pseudo-elements don't overflow */
-  width: 100%; /* Makes the button full width */
-  max-width: 200px; /* Limits button width on larger screens */
-  margin: 0 auto; /* Centers the button */
-
-  &:before {
-    content: '';
-    position: absolute;
-    top: 3px; /* Slight offset for the shadow effect */
-    left: 3px; /* Slight offset for the shadow effect */
-    background-color: #666; /* Dark gray for the shadow */
-    width: calc(100% - 6px); /* Adjust width based on offset */
-    height: calc(100% - 6px); /* Adjust height based on offset */
-    z-index: -1;
-  }
-
-  @media (max-width: 768px) {
-    padding: 8px 15px; /* Adjust padding for smaller screens */
-  }
-`;
-
 
 const ContactInfo = styled.div`
   margin-top: 40px;
@@ -118,12 +48,6 @@ const ContactSection = () => {
     <Section id="contact">
       <SectionTitle>Kontakt Oss</SectionTitle>
       <MessageText>Ønsker dere knallgod kaffe med mening, eller å starte opp en Høl i CVen Truck eller Cafe i deres kommune ved å bruke våres konsept. Ta gjerne kontakt :)</MessageText>
-      <Form>
-        <Input type="text" placeholder="Navn" />
-        <Input type="email" placeholder="Email" />
-        <TextArea placeholder="Din melding"></TextArea>
-        <SubmitButton type="submit">Send Melding</SubmitButton>
-      </Form>
       <ContactInfo>
         <p>Email: contact@example.com</p>
         <p>Telefon: +47 90258682</p>
