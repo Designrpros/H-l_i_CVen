@@ -91,20 +91,20 @@ const IconContainer = styled.div`
 const products = [
   {
     id: 1,
-    name: 'Bourbon Espresso',
-    description: 'Rich and full-bodied, with notes of dark chocolate and caramel.',
+    name: 'Sidamo Organic',
+    description: 'Frisk og fruktig, rik og fyldig. Kompleks med godt balansert syrlighet, hint av aprikos og bergamott.',
     image: coffeeImage, // Update path as necessary
   },
   {
     id: 2,
-    name: 'Arabica Light Roast',
-    description: 'Floral and citrusy, perfect for a refreshing morning cup.',
+    name: 'Finca Las Nubes',
+    description: 'Ren og godt balansert med klassisk smak, fin sødme og friskhet.',
     image: coffeeImage, // Update path as necessary
   },
   {
     id: 3,
-    name: 'Robusta Dark Roast',
-    description: 'Bold and robust, with a hint of chocolate and a smooth finish.',
+    name: 'Guadalupe Zaju Bourbon Barrel Aged',
+    description: 'Unik, kompleks og dypt tilfredsstillende. Lagret på whiskyfat.',
     image: coffeeImage, // Update path as necessary
   },
   {
