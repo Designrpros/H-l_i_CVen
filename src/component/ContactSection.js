@@ -16,7 +16,7 @@ const SectionTitle = styled.h2`
 `;
 
 const MessageText = styled.p`
-  font-size: 1.2rem;
+  font-size: 1.5rem;
   margin-bottom: 20px;
   color: #333;
   max-width: 600px;
@@ -24,8 +24,41 @@ const MessageText = styled.p`
   margin-right: auto;
 `;
 
-const ContactInfo = styled.div`
-  margin-top: 40px;
+const ContactButton = styled.a`
+  display: inline-block;
+  background-color: #fff;
+  color: #000;
+  padding: 10px 20px;
+  margin: 10px;
+  border: 2px solid black;
+  text-decoration: none;
+  font-weight: bold;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+
+  &:before {
+    content: '';
+    position: absolute;
+    background-color: #ccc; // Gray layer
+    top: 3px;
+    left: 3px;
+    right: -3px;
+    bottom: -3px;
+    z-index: -1;
+  }
+
+  &:hover {
+    box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.2);
+  }
+`;
+
+const ContactInfoContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  margin-top: 20px;
 `;
 
 const MapContainer = styled.div`
@@ -68,10 +101,10 @@ const ContactSection = () => {
     <Section id="contact">
       <SectionTitle>Kontakt Oss</SectionTitle>
       <MessageText>Ønsker dere knallgod kaffe med mening, eller å starte opp en Høl i CVen Truck eller Cafe i deres kommune ved å bruke våres konsept. Ta gjerne kontakt :)</MessageText>
-      <ContactInfo>
-        <p>Email: contact@example.com</p>
-        <p>Telefon: +47 90258682</p>
-      </ContactInfo>
+      <ContactInfoContainer>
+        <ContactButton href="mailto:contact@example.com">Email: contact@example.com</ContactButton>
+        <ContactButton href="tel:+4790258682">Telefon: +47 90258682</ContactButton>
+      </ContactInfoContainer>
       <IconContainer>
         <IconLink href="https://www.facebook.com/holivcen/" target="_blank" rel="noopener noreferrer">
           <SocialIcon src={facebookIcon} alt="Facebook" />
