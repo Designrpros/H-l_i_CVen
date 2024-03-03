@@ -1,8 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faFacebookF, faInstagram } from '@fortawesome/free-brands-svg-icons';
-
+import facebookIcon from './img/facebook.svg'; // Update the path as necessary
+import instagramIcon from './img/instagram.webp'; // Update the path as necessary
 
 const Section = styled.section`
   background-color: #9dd2ac;
@@ -11,7 +10,7 @@ const Section = styled.section`
 
 const SectionTitle = styled.h2`
   margin-bottom: 5px;
-  padding: 50px 0px ;
+  padding: 50px 0px;
   font-size: 2.5rem;
   color: #333;
 `;
@@ -36,6 +35,7 @@ const MapContainer = styled.div`
   padding-top: 56.25%; /* 16:9 Aspect Ratio */
   margin-top: 20px;
 `;
+
 const StyledIframe = styled.iframe`
   position: absolute;
   top: 0;
@@ -55,9 +55,13 @@ const IconContainer = styled.div`
 `;
 
 const IconLink = styled.a`
-  color: inherit; // Adjust as needed
+  display: inline-block;
 `;
 
+const SocialIcon = styled.img`
+  width: 40px; // Adjust size as needed
+  height: auto;
+`;
 
 const ContactSection = () => {
   return (
@@ -70,10 +74,10 @@ const ContactSection = () => {
       </ContactInfo>
       <IconContainer>
         <IconLink href="https://www.facebook.com/holivcen/" target="_blank" rel="noopener noreferrer">
-          <FontAwesomeIcon icon={faFacebookF} size="2x" />
+          <SocialIcon src={facebookIcon} alt="Facebook" />
         </IconLink>
         <IconLink href="https://www.instagram.com/holicven/" target="_blank" rel="noopener noreferrer">
-          <FontAwesomeIcon icon={faInstagram} size="2x" />
+          <SocialIcon src={instagramIcon} alt="Instagram" />
         </IconLink>
       </IconContainer>
       <MapContainer>
