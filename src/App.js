@@ -19,7 +19,7 @@ function App() {
     <>
       <Toolbar />
       <StyledWrapper>
-        <Home /> {/* Render the Home component here */}
+        <Home />
       </StyledWrapper>
     </>
   );
