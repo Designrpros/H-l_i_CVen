@@ -108,7 +108,7 @@ const Toolbar = () => {
         <MobileMenu>
           <a href="#home">Hjem</a>
           <a href="#who-we-are">Hvem er vi</a>
-          <a href="#sustainable-coffee">Bærekraftig kaffe</a>
+          <a href="#sustainable-coffee">Bæredyktig kaffe</a>
           <a href="#gallery">Galleri</a>
           <a href="#contact">Kontakt</a>
         </MobileMenu>
