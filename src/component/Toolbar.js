@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
+import { Link, useLocation } from 'react-router-dom';
 import logo from '../logo.png'; // Adjust the path as necessary
 
 const Nav = styled.nav`
@@ -7,7 +8,6 @@ const Nav = styled.nav`
   top: 0;
   left: 0;
   width: 100%;
-  background: transparent;
   background: #9dd2ac;
   height: 56px;
   display: flex;
@@ -57,27 +57,28 @@ const MobileMenu = styled.div`
   display: flex;
   flex-direction: column;
   position: fixed;
-  top: 56px; // Adjust based on your navbar height
+  top: 56px;
   left: 0;
   width: 100%;
   background: white;
   padding: 20px;
   box-sizing: border-box;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.2); // Adds a subtle shadow for depth
-  z-index: 100; // Ensure it's above other content
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  z-index: 100;
 
   a {
-    color: #333; // Dark color for elegance
-    text-decoration: none; // Removes underline
+    color: #333;
+    text-decoration: none;
     margin: 10px 0;
-    font-size: 1.2rem; // Larger font size
-    font-family: 'Playfair Display', serif; // Sexy font
+    font-size: 1.2rem;
+    font-family: 'Playfair Display', serif;
   }
 `;
 
-
 const Toolbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const location = useLocation();
+  const isProductShowcase = location.pathname.startsWith('/product/');
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
@@ -86,18 +87,23 @@ const Toolbar = () => {
   return (
     <Nav>
       <Logo>
-        <a href="#home">
+        <Link to="/">
           <img src={logo} alt="Logo" />
-        </a>
+        </Link>
       </Logo>
-      <NavigationItems>
-        <a href="#home">Hjem</a>
-        <a href="#who-we-are">Hvem er vi</a>
-        <a href="#sustainable-coffee">Bærekraftig kaffe</a>
-        <a href="#gallery">Galleri</a>
-        <a href="#contact">Kontakt</a>
-      </NavigationItems>
-      <MobileIcon onClick={toggleMobileMenu}>☰</MobileIcon>
+      {/* Conditionally render NavigationItems and MobileIcon if not on ProductShowcase page */}
+      {!isProductShowcase && (
+        <>
+          <NavigationItems>
+            <a href="#home">Hjem</a>
+            <a href="#who-we-are">Hvem er vi</a>
+            <a href="#sustainable-coffee">Bærekraftig kaffe</a>
+            <a href="#gallery">Galleri</a>
+            <a href="#contact">Kontakt</a>
+          </NavigationItems>
+          <MobileIcon onClick={toggleMobileMenu}>☰</MobileIcon>
+        </>
+      )}
       {isMobileMenuOpen && (
         <MobileMenu>
           <a href="#home">Hjem</a>
@@ -110,6 +116,5 @@ const Toolbar = () => {
     </Nav>
   );
 };
-
 
 export default Toolbar;

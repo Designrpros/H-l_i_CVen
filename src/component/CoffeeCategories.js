@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate instead of useHistory
 
 import coffeeImage from './img/coffee.webp'; // Adjust the import path as necessary
 import Brazil from './img/Brazil.png'; // Placeholder path, replace with your actual icon
@@ -91,43 +92,50 @@ const products = [
   {
     id: 1,
     name: 'Bourbon Espresso',
-    description: 'From Brazil with love',
+    description: 'Rich and full-bodied, with notes of dark chocolate and caramel.',
     image: coffeeImage, // Update path as necessary
   },
   {
     id: 2,
-    name: 'Bourbon Espresso',
-    description: 'From Brazil with love',
+    name: 'Arabica Light Roast',
+    description: 'Floral and citrusy, perfect for a refreshing morning cup.',
     image: coffeeImage, // Update path as necessary
   },
   {
     id: 3,
-    name: 'Bourbon Espresso',
-    description: 'From Brazil with love',
+    name: 'Robusta Dark Roast',
+    description: 'Bold and robust, with a hint of chocolate and a smooth finish.',
     image: coffeeImage, // Update path as necessary
   },
   {
     id: 4,
-    name: 'Bourbon Espresso',
-    description: 'From Brazil with love',
+    name: 'Colombian Medium Roast',
+    description: 'Smooth and creamy, with a balanced flavor of nuts and fruits.',
     image: coffeeImage, // Update path as necessary
   },
   {
     id: 5,
-    name: 'Bourbon Espresso',
-    description: 'From Brazil with love',
+    name: 'Ethiopian Natural',
+    description: 'Fruity and winey, with bright acidity and a complex flavor profile.',
     image: coffeeImage, // Update path as necessary
   },
   {
     id: 6,
-    name: 'Bourbon Espresso',
-    description: 'From Brazil with love',
+    name: 'Sumatra Mandheling',
+    description: 'Earthy and spicy, with a full body and a rich, lingering aftertaste.',
     image: coffeeImage, // Update path as necessary
   },
   // Add more products as needed
 ];
 
 const CoffeeCategories = () => {
+  let navigate = useNavigate(); // Use the useNavigate hook for navigation
+
+  const navigateToProductShowcase = (productId) => {
+    console.log(`Navigating to product with ID: ${productId}`); // Debugging line
+    navigate(`/product/${productId}`); // Navigate to the ProductShowcase page with the product ID
+  };
+    
   return (
     <SectionWrapper id="sustainable-coffee">
       <Title>BÆREDYKTIG KAFFE</Title>
@@ -149,7 +157,7 @@ const CoffeeCategories = () => {
       <Title>Våre Produkter</Title>
       <CategoriesWrapper>
         {products.map(({ id, name, description, image }) => (
-          <ProductCard key={id}>
+          <ProductCard key={id} onClick={() => navigateToProductShowcase(id)}> {/* Add onClick event */}
             <img src={image} alt={name} />
             <div className="card-content">
               <h3 className="card-title">{name}</h3>
@@ -161,6 +169,7 @@ const CoffeeCategories = () => {
     </SectionWrapper>
   );
 };
+
 
 
 export default CoffeeCategories;
