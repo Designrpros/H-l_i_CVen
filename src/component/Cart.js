@@ -114,20 +114,31 @@ const Cart = () => {
         : 'https://h-l-i-c-ven.vercel.app';
     
     const response = await fetch(`${baseUrl}/create-checkout-session`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        cartItems,
-        shippingDetails: address, // Include address in the payload
-      }),
-    });
-    const session = await response.json();
-  
-    const result = await stripe.redirectToCheckout({
-      sessionId: session.id,
-    });
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            cartItems,
+            shippingDetails: address,
+        }),
+        });
+        
+        if (!response.ok) {
+        throw new Error('Network response was not ok');
+        }
+        
+        const session = await response.json().catch(error => {
+        console.error('Error parsing JSON:', error);
+        throw new Error('Error parsing JSON');
+        });
+        
+        const result = await stripe.redirectToCheckout({
+        sessionId: session.id,
+        }).catch(error => {
+        console.error('Stripe Checkout error:', error);
+     });
+          
   
     if (result.error) {
       console.error(result.error.message);
