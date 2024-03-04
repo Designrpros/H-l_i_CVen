@@ -107,7 +107,13 @@ const Cart = () => {
 
   const handleCheckout = async () => {
     const stripe = await stripePromise;
-    const response = await fetch('http://localhost:4242/create-checkout-session', {
+    
+    // Determine the base URL dynamically
+    const baseUrl = process.env.NODE_ENV === 'development' 
+        ? 'http://localhost:4242' 
+        : 'https://h-l-i-c-ven.vercel.app';
+    
+    const response = await fetch(`${baseUrl}/create-checkout-session`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -126,7 +132,8 @@ const Cart = () => {
     if (result.error) {
       console.error(result.error.message);
     }
-  };
+};
+
   
   
 
