@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import { Link, useLocation } from 'react-router-dom';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faShoppingCart } from '@fortawesome/free-solid-svg-icons';
+import checkoutIcon from './img/Checkout.png'; // Adjust the path as necessary
 import logo from '../logo.png'; // Adjust the path as necessary
 
 const Nav = styled.nav`
@@ -102,10 +101,9 @@ const CartIconContainer = styled.div`
   margin-left: auto;
   cursor: pointer;
 
-  // Adjust the size, color, or margin as needed
-  svg {
-    font-size: 24px;
-    color: #000;
+  // You might want to adjust the size of the checkout icon image here
+  img {
+    height: 24px; // Example size, adjust as needed
   }
 `;
 
@@ -152,12 +150,12 @@ const Toolbar = () => {
         </MobileMenu>
       )}
       {shouldShowCartIcon && (
-        <CartIconContainer>
-          <Link to="/cart">
-            <FontAwesomeIcon icon={faShoppingCart} />
-          </Link>
-        </CartIconContainer>
-      )}
+    <CartIconContainer>
+      <Link to="/cart">
+        <img src={checkoutIcon} alt="Cart" />
+      </Link>
+    </CartIconContainer>
+  )}
     </Nav>
   );
 };
