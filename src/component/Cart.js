@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import { useCart } from '../context/CartContext';
-import { loadStripe } from '@stripe/stripe-js';
 import stripePromise from '../stripe/stripeClient';
 
 const CartContainer = styled.div`
