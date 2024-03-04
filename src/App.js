@@ -2,10 +2,14 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Home from './Pages/Home';
 import ProductShowcase from './component/ProductShowcase';
+import ProductListing from './component/ProductListing'; 
+import Cart from './component/Cart.js';
 import "slick-carousel/slick/slick.css"; 
 import "slick-carousel/slick/slick-theme.css";
 import './App.css';
 import Toolbar from './component/Toolbar';
+import SuccessPage from './component/SuccessPage';
+import CancelPage from './component/CancelPage';
 
 function App() {
   return (
@@ -14,6 +18,10 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/product/:productId" element={<ProductShowcase />} />
+        <Route path="/products" element={<ProductListing />} />
+        <Route path="/cart" element={<Cart />} />
+        <Route path="/success" element={<SuccessPage />} />
+        <Route path="/cancel" element={<CancelPage />} />
       </Routes>
     </Router>
   );

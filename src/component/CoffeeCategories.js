@@ -1,8 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom'; // Import useNavigate instead of useHistory
+import products from '../data/products';
 
-import coffeeImage from './img/coffee.webp'; // Adjust the import path as necessary
 import Brazil from './img/Brazil.png'; // Placeholder path, replace with your actual icon
 import Colombia from './img/Colombia.png';
 
@@ -88,46 +88,6 @@ const IconContainer = styled.div`
   margin-bottom: 20px;
 `;
 
-const products = [
-  {
-    id: 1,
-    name: 'Sidamo Organic',
-    description: 'Frisk og fruktig, rik og fyldig. Kompleks med godt balansert syrlighet, hint av aprikos og bergamott.',
-    image: coffeeImage, // Update path as necessary
-  },
-  {
-    id: 2,
-    name: 'Finca Las Nubes',
-    description: 'Ren og godt balansert med klassisk smak, fin sødme og friskhet.',
-    image: coffeeImage, // Update path as necessary
-  },
-  {
-    id: 3,
-    name: 'Guadalupe Zaju Bourbon Barrel Aged',
-    description: 'Unik, kompleks og dypt tilfredsstillende. Lagret på whiskyfat.',
-    image: coffeeImage, // Update path as necessary
-  },
-  {
-    id: 4,
-    name: 'Colombian Medium Roast',
-    description: 'Smooth and creamy, with a balanced flavor of nuts and fruits.',
-    image: coffeeImage, // Update path as necessary
-  },
-  {
-    id: 5,
-    name: 'Ethiopian Natural',
-    description: 'Fruity and winey, with bright acidity and a complex flavor profile.',
-    image: coffeeImage, // Update path as necessary
-  },
-  {
-    id: 6,
-    name: 'Sumatra Mandheling',
-    description: 'Earthy and spicy, with a full body and a rich, lingering aftertaste.',
-    image: coffeeImage, // Update path as necessary
-  },
-  // Add more products as needed
-];
-
 const CoffeeCategories = () => {
   let navigate = useNavigate(); // Use the useNavigate hook for navigation
 
@@ -136,6 +96,9 @@ const CoffeeCategories = () => {
     navigate(`/product/${productId}`); // Navigate to the ProductShowcase page with the product ID
   };
     
+  // Only display the first 4 products
+  const displayedProducts = products.slice(0, 3);
+
   return (
     <SectionWrapper id="sustainable-coffee">
       <Title>BÆREDYKTIG KAFFE</Title>
@@ -156,9 +119,9 @@ const CoffeeCategories = () => {
 
       <Title>Våre Produkter</Title>
       <CategoriesWrapper>
-        {products.map(({ id, name, description, image }) => (
-          <ProductCard key={id} onClick={() => navigateToProductShowcase(id)}> {/* Add onClick event */}
-            <img src={image} alt={name} />
+      {displayedProducts.map(({ id, name, description, image }) => (
+          <ProductCard key={id} onClick={() => navigateToProductShowcase(id)}>
+            <img src={`${process.env.PUBLIC_URL}/images/${image}`} alt={name} />
             <div className="card-content">
               <h3 className="card-title">{name}</h3>
               <p className="card-description">{description}</p>
@@ -166,6 +129,7 @@ const CoffeeCategories = () => {
           </ProductCard>
         ))}
       </CategoriesWrapper>
+
     </SectionWrapper>
   );
 };

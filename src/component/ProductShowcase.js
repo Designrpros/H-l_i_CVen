@@ -1,47 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
-import coffeeImage from './img/coffee.webp'; // Adjust the path as necessary
-
-const products = [
-  {
-    id: '1',
-    name: 'Sidamo Organic',
-    description: 'Frisk og fruktig, rik og fyldig. Kompleks med godt balansert syrlighet, hint av aprikos og bergamott.',
-    price: 'kr. 250,00/2,2L (kr. 20,00/kopp)',
-    origin: 'Ethiopia',
-    altitude: '1700-1800moh',
-    process: 'Vasket og soltørket',
-    tasteNotes: 'Aprikos, bergamott',
-    image: coffeeImage,
-  },
-  {
-    id: '2',
-    name: 'Finca Las Nubes',
-    description: 'Ren og godt balansert med klassisk smak, fin sødme og friskhet.',
-    price: 'kr. 350/2,2L (kr. 29,00/kopp)',
-    origin: 'Guatemala',
-    altitude: '1.500m',
-    process: 'Fully washed and dried on patios',
-    tasteNotes: 'Klassisk smak, fin sødme, friskhet',
-    image: coffeeImage,
-  },
-  {
-    id: '3',
-    name: 'Guadalupe Zaju Bourbon Barrel Aged',
-    description: 'Unik, kompleks og dypt tilfredsstillende. Lagret på whiskyfat.',
-    price: 'kr. 450,00/2,2L (kr. 37,00/kopp)',
-    origin: 'Mexico',
-    altitude: '900 - 1,400 meter over havet',
-    process: 'Vasket & tørket på guardiolas',
-    tasteNotes: 'Sherry, espresso martini, vanilla',
-    image: coffeeImage,
-  },
-  { id: '4', name: 'Colombian Medium Roast', description: 'Smooth and creamy, with a balanced flavor of nuts and fruits.', image: coffeeImage },
-  { id: '5', name: 'Ethiopian Natural', description: 'Fruity and winey, with bright acidity and a complex flavor profile.', image: coffeeImage },
-  { id: '6', name: 'Sumatra Mandheling', description: 'Earthy and spicy, with a full body and a rich, lingering aftertaste.', image: coffeeImage },
-];
-
+import { useCart } from '../context/CartContext'; // Adjust the import path as necessary
+import products from '../data/products';
 
 const ShowcaseContainer = styled.div`
   display: flex;
@@ -118,19 +79,20 @@ const DetailText = styled.p`
 const ProductShowcase = () => {
   const { productId } = useParams();
   const [product, setProduct] = useState(null);
+  const { addToCart } = useCart(); // This line must be at the top level, not inside any conditional or function
 
   useEffect(() => {
-    const productDetails = products.find(product => product.id === productId);
+    const productDetails = products.find(product => product.id.toString() === productId);
     setProduct(productDetails);
   }, [productId]);
 
   if (!product) {
-    return <div>Laster...</div>;
+    return <div>Loading...</div>;
   }
 
   return (
     <ShowcaseContainer>
-      <ProductImage src={product.image} alt={product.name} />
+      <ProductImage src={`${process.env.PUBLIC_URL}/images/${product.image}`} alt={product.name} />
       <ProductContent>
         <ProductName>{product.name}</ProductName>
         <ProductDescription>{product.description}</ProductDescription>
@@ -152,6 +114,7 @@ const ProductShowcase = () => {
           <DetailText>{product.tasteNotes}</DetailText>
         </CoffeeDetail>
       </ProductContent>
+      <button onClick={() => addToCart(product)}>Add to Cart</button>
     </ShowcaseContainer>
   );
 };
