@@ -8,6 +8,8 @@ const app = express();
 app.use(cors());
 
 module.exports = async (req, res) => {
+    console.log("Received request:", req.method, req.url); // Log request details
+
     // Set CORS headers
     res.setHeader('Access-Control-Allow-Origin', '*'); // Adjust accordingly for production
     res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
@@ -19,6 +21,7 @@ module.exports = async (req, res) => {
     }
 
     if (req.method !== 'POST') {
+        console.error("Method not allowed:", req.method); // Log error for non-POST requests
         return res.status(405).end('Method Not Allowed');
     }
 
@@ -59,9 +62,10 @@ module.exports = async (req, res) => {
             },
         });
 
+        console.log("Stripe checkout session created:", session.id); // Log checkout session creation
         res.json({ id: session.id });
     } catch (error) {
-        console.error("Error creating Stripe checkout session:", error);
+        console.error("Error creating Stripe checkout session:", error); // Log error message
         res.status(500).json({ error: error.message });
     }
 };
