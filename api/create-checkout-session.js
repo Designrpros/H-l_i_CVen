@@ -8,7 +8,7 @@ const app = express();
 app.use(cors());
 
 module.exports = async (req, res) => {
-    console.log("Received request:", req.method, req.url); // Log request details
+    console.log("Received request:", req.method, req.url);
 
     // Set CORS headers
     res.setHeader('Access-Control-Allow-Origin', '*'); // Adjust accordingly for production
