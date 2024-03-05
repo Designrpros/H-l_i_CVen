@@ -1,4 +1,11 @@
+const express = require('express');
+const cors = require('cors');
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+
+const app = express();
+
+// Apply CORS middleware to allow requests from all origins (adjust for production)
+app.use(cors());
 
 module.exports = async (req, res) => {
     // Set CORS headers
