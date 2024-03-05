@@ -1,19 +1,9 @@
-const express = require('express');
-const cors = require('cors');
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
-
-const app = express();
-
-// Apply CORS middleware to allow requests from all origins (adjust for production)
-app.use(cors({
-    origin: 'https://h-l-i-c-ven.vercel.app' // Replace with your actual origin
-}));
 
 module.exports = async (req, res) => {
     console.log("Received request:", req.method, req.url);
 
     // Set CORS headers (replace `'*'` with specific allowed origins/methods in production)
-    res.setHeader('Access-Control-Allow-Origin', '*'); // Adjust accordingly for production
     res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
