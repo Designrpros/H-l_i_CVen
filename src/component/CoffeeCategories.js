@@ -117,7 +117,7 @@ const CoffeeCategories = () => {
         </IconContainer>
       </DescriptionBox>
 
-      <Title>Våre Produkter</Title>
+      <Title>Utvalgte Produkter</Title>
       <CategoriesWrapper>
       {displayedProducts.map(({ id, name, description, image }) => (
           <ProductCard key={id} onClick={() => navigateToProductShowcase(id)}>

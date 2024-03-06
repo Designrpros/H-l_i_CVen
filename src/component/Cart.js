@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import { useCart } from '../context/CartContext';
-import stripePromise from '../stripe/stripeClient';
+import stripePromise from '../Stripe/stripeClient';
 
 const CartContainer = styled.div`
   margin: 50px 20px;
@@ -111,7 +111,7 @@ const Cart = () => {
     // Determine the base URL dynamically
     const baseUrl = process.env.NODE_ENV === 'development' 
         ? 'http://localhost:4242' 
-        : 'https://h-l-i-c-ven.vercel.app';
+        : 'https://holicven-0ef273556045.herokuapp.com';
     
     const response = await fetch(`${baseUrl}/create-checkout-session`, {
         method: 'POST',
