@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import { useCart } from '../context/CartContext';
-import stripePromise from './Stripe/stripeClient';
+import stripePromise from '../stripe/stripeClient';
 
 const CartContainer = styled.div`
   margin: 50px 20px;
