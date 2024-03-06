@@ -1,23 +1,27 @@
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
-
-// Assuming you've initialized the Firebase Admin SDK correctly (globally or within this file)
 const admin = require('firebase-admin');
-const serviceAccount = require('../firebase-service-account.json');
 
 // Initialize Firebase Admin SDK if not already initialized
 if (!admin.apps.length) {
+    // Convert the private key from a string with escaped newlines into one that has actual newline characters
+    const privateKey = process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n');
+
     admin.initializeApp({
-        credential: admin.credential.cert(serviceAccount),
+        credential: admin.credential.cert({
+            projectId: process.env.FIREBASE_PROJECT_ID,
+            clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+            privateKey: privateKey,
+        }),
     });
 }
 
 const db = admin.firestore();
 
 module.exports = async (req, res) => {
-    console.log("Received webhook request:", req.method, req.url); // Log request details
+    console.log("Received webhook request:", req.method, req.url);
 
     if (req.method !== 'POST') {
-        console.error("Method not allowed:", req.method); // Log non-POST request error
+        console.error("Method not allowed:", req.method);
         return res.status(405).end('Method Not Allowed');
     }
 
@@ -31,19 +35,16 @@ module.exports = async (req, res) => {
             process.env.STRIPE_WEBHOOK_SECRET
         );
     } catch (err) {
-        console.error(`Webhook signature verification failed.`, err.message); // Log error message
+        console.error(`Webhook signature verification failed.`, err.message);
         return res.status(400).send(`Webhook Error: ${err.message}`);
     }
 
-    // Handle the event (replace with your specific logic)
     if (event.type === 'checkout.session.completed') {
         const session = event.data.object;
 
-        console.log("Checkout session completed:", session.id); // Log checkout session completion
+        console.log("Checkout session completed:", session.id);
 
         try {
-            // Perform operations based on the checkout session completion
-            // (e.g., save the order to Firestore, send order confirmation emails, etc.)
             const orderRef = db.collection('orders').doc(session.id);
             await orderRef.set({
                 customerEmail: session.customer_details.email,
@@ -52,15 +53,13 @@ module.exports = async (req, res) => {
                 // Add other order details you need
             });
 
-            console.log(`Order ${session.id} saved to Firestore.`); // Log order saving success
+            console.log(`Order ${session.id} saved to Firestore.`);
         } catch (error) {
-            console.error("Error saving order to Firestore:", error.message); // Log error message
-            // Handle errors appropriately (e.g., retry saving, send notifications)
+            console.error("Error saving order to Firestore:", error.message);
         }
     } else {
-        console.warn(`Unhandled event type ${event.type}`); // Log unhandled event types
+        console.warn(`Unhandled event type ${event.type}`);
     }
 
-    // Return a response to acknowledge receipt of the event
     res.json({ received: true });
 };
