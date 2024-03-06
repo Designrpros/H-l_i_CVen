@@ -3,7 +3,8 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Home from './Pages/Home';
 import ProductShowcase from './component/ProductShowcase';
 import ProductListing from './component/ProductListing'; 
-import Cart from './component/Cart.js';
+import Cart from './component/Cart';
+import Dashboard from './component/admin/Dashboard'; // Import the Dashboard component
 import "slick-carousel/slick/slick.css"; 
 import "slick-carousel/slick/slick-theme.css";
 import './App.css';
@@ -22,6 +23,8 @@ function App() {
         <Route path="/cart" element={<Cart />} />
         <Route path="/success" element={<SuccessPage />} />
         <Route path="/cancel" element={<CancelPage />} />
+        {/* Add the route for the Dashboard component */}
+        <Route path="/admin/*" element={<Dashboard />} />
       </Routes>
     </Router>
   );
