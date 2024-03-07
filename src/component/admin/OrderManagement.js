@@ -17,28 +17,25 @@ const OrdersList = styled.div`
 `;
 
 const OrderItem = styled.div`
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
   align-items: center;
-  justify-content: space-between;
   padding: 10px;
   border-bottom: 1px solid #eee;
-
   &:last-child {
     border-bottom: none;
   }
-`;
-
-const DetailContainer = styled.div`
-  display: flex;
-  align-items: center;
-  overflow-x: auto;
-  white-space: nowrap;
+  &:hover {
+    background-color: #f8f8f8; // subtle hover effect
+  }
 `;
 
 const Detail = styled.p`
-  margin: 0 10px;
+  margin: 4px 8px;
   color: #666;
-  flex: none; /* Prevent flex items from growing or shrinking */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `;
 
 const Header = styled.h1`
@@ -46,13 +43,33 @@ const Header = styled.h1`
   margin-bottom: 20px;
 `;
 
-
 const ErrorMsg = styled.p`
   color: red;
 `;
 
 const LoadingMsg = styled.p`
   color: #333;
+`;
+
+// Additional styles for interactive elements
+const Button = styled.button`
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+
+  &:hover {
+    background-color: #0056b3;
+  }
+`;
+
+const DetailContainer = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px; // Adds space between details
 `;
 
 
@@ -94,14 +111,16 @@ const OrderManagement = () => {
         {orders.sort((a, b) => b.createdAt._seconds - a.createdAt._seconds)
           .map((order) => (
             <OrderItem key={order.id}>
-            <DetailContainer>
-              <Detail><strong>Date:</strong> {new Date(order.createdAt._seconds * 1000).toLocaleDateString()}</Detail>
-              <Detail><strong>Price:</strong> {order.totalAmount / 100} NOK</Detail>
-              <Detail><strong>Product Name:</strong> {order.productsPurchased.map(p => p.name).join(', ')}</Detail>
-              <Detail><strong>Customer's Name:</strong> {order.email}</Detail>
-              <Detail><strong>Order ID:</strong> {order.id}</Detail>
-            </DetailContainer>
-          </OrderItem>
+              <DetailContainer>
+                <Detail><strong>Date:</strong> {new Date(order.createdAt._seconds * 1000).toLocaleDateString()}</Detail>
+                <Detail><strong>Price:</strong> {order.totalAmount / 100} NOK</Detail>
+                <Detail><strong>Product:</strong> {order.productsPurchased.map(p => p.name).join(', ')}</Detail>
+                <Detail><strong>Customer:</strong> {order.email}</Detail>
+                <Detail><strong>ID:</strong> {order.id}</Detail>
+              </DetailContainer>
+              {/* Example interactive element */}
+              <Button onClick={() => alert(`Order ${order.id} details`)}>View Details</Button>
+            </OrderItem>
           ))}
       </OrdersList>
     </OrdersContainer>
