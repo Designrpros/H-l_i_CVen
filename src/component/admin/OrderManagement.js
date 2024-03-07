@@ -16,10 +16,13 @@ const OrderManagement = () => {
 
   useEffect(() => {
     const fetchOrders = async () => {
+      // Correctly use the endpoint variable here
+      const endpoint = `${process.env.REACT_APP_BACKEND_URL}/api/orders`;    
       setLoading(true);
       setError('');
       try {
-        const response = await fetch('/api/orders');
+        // Use the endpoint variable in the fetch call
+        const response = await fetch(endpoint);
         if (!response.ok) {
           throw new Error(`Failed to fetch: ${response.status} ${response.statusText}`);
         }
