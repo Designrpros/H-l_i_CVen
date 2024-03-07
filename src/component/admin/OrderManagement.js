@@ -11,45 +11,43 @@ const OrderItem = styled.div`
 
 const OrderManagement = () => {
   const [orders, setOrders] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     const fetchOrders = async () => {
-      const endpoint = '/api/orders'; // Adjust the URL as per your route
-      console.log("Fetching orders from:", endpoint);
-
+      setLoading(true);
+      setError('');
       try {
-        const response = await fetch(endpoint);
-        console.log("Response status:", response.status);
-        // Uncomment the next line if you want to see all response headers
-        // console.log("Response headers:", response.headers);
-
+        const response = await fetch('/api/orders');
         if (!response.ok) {
-          const errorBody = await response.text(); // or response.json() if you expect a JSON error response
-          throw new Error(`Failed to fetch: ${response.status} ${response.statusText}, Body: ${errorBody}`);
+          throw new Error(`Failed to fetch: ${response.status} ${response.statusText}`);
         }
-
         const data = await response.json();
-        console.log("Orders fetched:", data.orders);
-        setOrders(data.orders); // Assuming the response has an orders array
+        setOrders(data.orders);
       } catch (error) {
+        setError("Failed to fetch orders. Please try again later.");
         console.error("Error fetching orders:", error);
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchOrders();
   }, []);
 
+  if (loading) return <p>Loading orders...</p>;
+  if (error) return <p>{error}</p>;
+
   return (
     <OrdersContainer>
       <h1>Order Management</h1>
-      {orders.sort((a, b) => b.createdAt - a.createdAt) // Sort orders by createdAt descending
+      {orders.sort((a, b) => b.createdAt - a.createdAt)
         .map((order) => (
           <OrderItem key={order.id}>
-            {/* Display order details here */}
             <p>Order ID: {order.id}</p>
             <p>Date: {new Date(order.createdAt).toLocaleDateString()}</p>
             <p>Total: ${(order.totalAmount / 100).toFixed(2)}</p>
-            {/* Add more details as needed */}
           </OrderItem>
         ))}
     </OrdersContainer>
