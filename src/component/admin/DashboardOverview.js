@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import Widget from './Widget'; // Adjust the import path as necessary
+import Widget from './widget/Widget'; // Adjust the import path as necessary
 
 const OverviewContainer = styled.div`
   display: grid;

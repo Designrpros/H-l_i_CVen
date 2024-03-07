@@ -1,13 +1,15 @@
 // Dashboard.js
 import React from 'react';
 import styled from 'styled-components';
-import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
-// Import your page components here
+import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import ProductManagement from './ProductManagement';
 import OrderManagement from './OrderManagement';
 import CustomerManagement from './CustomerManagement';
 import Analytics from './Analytics';
-import DashboardOverview from './DashboardOverview'; // Adjust the import path as necessary
+import DashboardOverview from './DashboardOverview'; // Ensure this path is correct
+import CustomersWidget from './widget/CustomersWidget'; // Adjust the import path as necessary
+import OrdersWidget from './widget/OrdersWidget'; // Adjust the import path as necessary
+import ProductsWidget from './widget/ProductsWidget'; // Adjust the import path as necessary
 
 const DashboardContainer = styled.div`
   display: flex;
@@ -45,26 +47,29 @@ const StyledLink = styled(Link)`
 
 const Dashboard = () => {
   return (
-      <DashboardContainer>
-        <Sidebar>
-          <h2>Admin Panel</h2>
-          <StyledLink to="/admin/dashboard">Dashboard</StyledLink>
-          <StyledLink to="/admin/products">Product Management</StyledLink>
-          <StyledLink to="/admin/orders">Order Management</StyledLink>
-          <StyledLink to="/admin/customers">Customer Management</StyledLink>
-          <StyledLink to="/admin/analytics">Analytics</StyledLink>
-        </Sidebar>
-        <MainContent>
+    <DashboardContainer>
+      <Sidebar>
+        {/* Your existing sidebar links */}
+      </Sidebar>
+      <MainContent>
         <Routes>
-        <Route path="dashboard" element={<DashboardOverview />} />
-            <Route path="products" element={<ProductManagement />} />
-            <Route path="orders" element={<OrderManagement />} />
-            <Route path="customers" element={<CustomerManagement />} />
-            <Route path="analytics" element={<Analytics />} />
-            {/* Add more routes as needed */}
-         </Routes>
-        </MainContent>
-      </DashboardContainer>
+          <Route path="dashboard" element={
+            <>
+              <DashboardOverview />
+              <CustomersWidget />
+              <OrdersWidget />
+              <ProductsWidget />
+              {/* You can arrange these widgets as needed */}
+            </>
+          } />
+          <Route path="products" element={<ProductManagement />} />
+          <Route path="orders" element={<OrderManagement />} />
+          <Route path="customers" element={<CustomerManagement />} />
+          <Route path="analytics" element={<Analytics />} />
+          {/* Add more routes as needed */}
+        </Routes>
+      </MainContent>
+    </DashboardContainer>
   );
 };
 

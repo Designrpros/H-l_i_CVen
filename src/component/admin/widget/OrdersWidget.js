@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { db } from './firebase'; // Adjust import path as necessary
+import { db } from '../../../firebaseConfig'; // Adjust import path as necessary
 import { collection, onSnapshot } from 'firebase/firestore';
 
 const OrdersWidget = () => {
