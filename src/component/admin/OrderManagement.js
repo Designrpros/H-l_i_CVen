@@ -18,6 +18,7 @@ const OrdersList = styled.div`
 
 const OrderItem = styled.div`
   display: flex;
+  align-items: center;
   justify-content: space-between;
   padding: 10px;
   border-bottom: 1px solid #eee;
@@ -27,15 +28,27 @@ const OrderItem = styled.div`
   }
 `;
 
+const DetailContainer = styled.div`
+  display: flex;
+  align-items: center;
+  overflow-x: auto;
+  white-space: nowrap;
+`;
+
+const Detail = styled.p`
+  margin: 0 10px;
+  color: #666;
+  flex: none; /* Prevent flex items from growing or shrinking */
+`;
+
 const Header = styled.h1`
   color: #333;
   margin-bottom: 20px;
 `;
 
-// Additional styles for detail and responsiveness
-const Detail = styled.p`
-  margin: 5px 0;
-  color: #666;
+const ScrollableID = styled.div`
+  overflow-x: auto;
+  white-space: nowrap;
 `;
 
 const ErrorMsg = styled.p`
@@ -45,6 +58,7 @@ const ErrorMsg = styled.p`
 const LoadingMsg = styled.p`
   color: #333;
 `;
+
 
 const OrderManagement = () => {
   const [orders, setOrders] = useState([]);
@@ -81,15 +95,18 @@ const OrderManagement = () => {
     <OrdersContainer>
       <Header>Order Management</Header>
       <OrdersList>
-        {orders.sort((a, b) => b.createdAt - a.createdAt)
+        {orders.sort((a, b) => b.createdAt._seconds - a.createdAt._seconds)
           .map((order) => (
             <OrderItem key={order.id}>
-              <div>
+              <DetailContainer>
+                <Detail><strong>Date:</strong> {new Date(order.createdAt._seconds * 1000).toLocaleDateString()}</Detail>
+                <Detail><strong>Price:</strong> {order.totalAmount / 100} NOK</Detail>
+                <Detail><strong>Product Name:</strong> {order.productsPurchased.map(p => p.name).join(', ')}</Detail>
+                <Detail><strong>Customer's Name:</strong> {order.email}</Detail>
+              </DetailContainer>
+              <ScrollableID>
                 <Detail><strong>Order ID:</strong> {order.id}</Detail>
-                <Detail><strong>Date:</strong> {new Date(order.createdAt).toLocaleDateString()}</Detail>
-                <Detail><strong>Total:</strong> ${(order.totalAmount / 100).toFixed(2)}</Detail>
-              </div>
-              {/* Implement additional details and actions here */}
+              </ScrollableID>
             </OrderItem>
           ))}
       </OrdersList>
@@ -98,4 +115,3 @@ const OrderManagement = () => {
 };
 
 export default OrderManagement;
-
