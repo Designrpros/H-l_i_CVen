@@ -1,5 +1,3 @@
-// OrderManagement.js
-
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
@@ -16,10 +14,22 @@ const OrderManagement = () => {
 
   useEffect(() => {
     const fetchOrders = async () => {
+      const endpoint = '/api/orders'; // Adjust the URL as per your route
+      console.log("Fetching orders from:", endpoint);
+
       try {
-        const response = await fetch('/api/orders'); // Adjust the URL as per your route
-        if (!response.ok) throw new Error('Failed to fetch');
+        const response = await fetch(endpoint);
+        console.log("Response status:", response.status);
+        // Uncomment the next line if you want to see all response headers
+        // console.log("Response headers:", response.headers);
+
+        if (!response.ok) {
+          const errorBody = await response.text(); // or response.json() if you expect a JSON error response
+          throw new Error(`Failed to fetch: ${response.status} ${response.statusText}, Body: ${errorBody}`);
+        }
+
         const data = await response.json();
+        console.log("Orders fetched:", data.orders);
         setOrders(data.orders); // Assuming the response has an orders array
       } catch (error) {
         console.error("Error fetching orders:", error);
