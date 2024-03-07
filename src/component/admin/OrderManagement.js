@@ -2,26 +2,61 @@ import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 const OrdersContainer = styled.div`
-  /* Styles for your container */
+  padding: 20px;
+  background-color: #f9f9f9;
+  min-height: 100vh;
+`;
+
+const OrdersList = styled.div`
+  max-height: 80vh;
+  overflow-y: auto;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  padding: 20px;
 `;
 
 const OrderItem = styled.div`
-  /* Styles for each order item */
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+
+  &:last-child {
+    border-bottom: none;
+  }
+`;
+
+const Header = styled.h1`
+  color: #333;
+  margin-bottom: 20px;
+`;
+
+// Additional styles for detail and responsiveness
+const Detail = styled.p`
+  margin: 5px 0;
+  color: #666;
+`;
+
+const ErrorMsg = styled.p`
+  color: red;
+`;
+
+const LoadingMsg = styled.p`
+  color: #333;
 `;
 
 const OrderManagement = () => {
   const [orders, setOrders] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
   useEffect(() => {
     const fetchOrders = async () => {
-      // Correctly use the endpoint variable here
-      const endpoint = `${process.env.REACT_APP_BACKEND_URL}/api/orders`;    
+      const endpoint = `${process.env.REACT_APP_BACKEND_URL}/api/orders`;
       setLoading(true);
       setError('');
       try {
-        // Use the endpoint variable in the fetch call
         const response = await fetch(endpoint);
         if (!response.ok) {
           throw new Error(`Failed to fetch: ${response.status} ${response.statusText}`);
@@ -39,22 +74,28 @@ const OrderManagement = () => {
     fetchOrders();
   }, []);
 
-  if (loading) return <p>Loading orders...</p>;
-  if (error) return <p>{error}</p>;
+  if (loading) return <LoadingMsg>Loading orders...</LoadingMsg>;
+  if (error) return <ErrorMsg>{error}</ErrorMsg>;
 
   return (
     <OrdersContainer>
-      <h1>Order Management</h1>
-      {orders.sort((a, b) => b.createdAt - a.createdAt)
-        .map((order) => (
-          <OrderItem key={order.id}>
-            <p>Order ID: {order.id}</p>
-            <p>Date: {new Date(order.createdAt).toLocaleDateString()}</p>
-            <p>Total: ${(order.totalAmount / 100).toFixed(2)}</p>
-          </OrderItem>
-        ))}
+      <Header>Order Management</Header>
+      <OrdersList>
+        {orders.sort((a, b) => b.createdAt - a.createdAt)
+          .map((order) => (
+            <OrderItem key={order.id}>
+              <div>
+                <Detail><strong>Order ID:</strong> {order.id}</Detail>
+                <Detail><strong>Date:</strong> {new Date(order.createdAt).toLocaleDateString()}</Detail>
+                <Detail><strong>Total:</strong> ${(order.totalAmount / 100).toFixed(2)}</Detail>
+              </div>
+              {/* Implement additional details and actions here */}
+            </OrderItem>
+          ))}
+      </OrdersList>
     </OrdersContainer>
   );
 };
 
 export default OrderManagement;
+
