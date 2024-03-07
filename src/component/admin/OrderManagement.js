@@ -47,9 +47,16 @@ const Header = styled.h1`
 `;
 
 const ScrollableID = styled.div`
+  max-width: 100px; /* Adjust based on your layout needs */
   overflow-x: auto;
   white-space: nowrap;
 `;
+
+const IDDetail = styled(Detail)`
+  display: inline-block; /* Make sure the ID detail itself is inline */
+  margin: 0; /* Adjust as needed */
+`;
+
 
 const ErrorMsg = styled.p`
   color: red;
@@ -98,16 +105,16 @@ const OrderManagement = () => {
         {orders.sort((a, b) => b.createdAt._seconds - a.createdAt._seconds)
           .map((order) => (
             <OrderItem key={order.id}>
-              <DetailContainer>
-                <Detail><strong>Date:</strong> {new Date(order.createdAt._seconds * 1000).toLocaleDateString()}</Detail>
-                <Detail><strong>Price:</strong> {order.totalAmount / 100} NOK</Detail>
-                <Detail><strong>Product Name:</strong> {order.productsPurchased.map(p => p.name).join(', ')}</Detail>
-                <Detail><strong>Customer's Name:</strong> {order.email}</Detail>
-              </DetailContainer>
-              <ScrollableID>
-                <Detail><strong>Order ID:</strong> {order.id}</Detail>
-              </ScrollableID>
-            </OrderItem>
+            <DetailContainer>
+              <Detail><strong>Date:</strong> {new Date(order.createdAt._seconds * 1000).toLocaleDateString()}</Detail>
+              <Detail><strong>Price:</strong> {order.totalAmount / 100} NOK</Detail>
+              <Detail><strong>Product Name:</strong> {order.productsPurchased.map(p => p.name).join(', ')}</Detail>
+              <Detail><strong>Customer's Name:</strong> {order.email}</Detail>
+            </DetailContainer>
+            <ScrollableID>
+              <IDDetail><strong>Order ID:</strong> {order.id}</IDDetail>
+            </ScrollableID>
+          </OrderItem>
           ))}
       </OrdersList>
     </OrdersContainer>
