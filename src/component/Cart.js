@@ -178,44 +178,6 @@ const Cart = () => {
       <TotalContainer>
         <strong>Total: {calculateOverallTotal().toFixed(2)}NOK</strong>
       </TotalContainer>
-      <div>
-      <input
-          name="line1"
-          value={address.line1}
-          onChange={handleAddressChange}
-          placeholder="Adresse Linje 1"
-        />
-        <input
-          name="line2"
-          value={address.line2}
-          onChange={handleAddressChange}
-          placeholder="Adresse Linje 2"
-        />
-        <input
-          name="city"
-          value={address.city}
-          onChange={handleAddressChange}
-          placeholder="By"
-        />
-        <input
-          name="state"
-          value={address.state}
-          onChange={handleAddressChange}
-          placeholder="Fylke"
-        />
-        <input
-          name="postal_code"
-          value={address.postal_code}
-          onChange={handleAddressChange}
-          placeholder="Postnummer"
-        />
-        <input
-          name="country"
-          value={address.country}
-          onChange={handleAddressChange}
-          placeholder="Land"
-        />
-      </div>
       <CheckoutButton onClick={handleCheckout}>Proceed to Checkout</CheckoutButton>
     </CartContainer>
   );
