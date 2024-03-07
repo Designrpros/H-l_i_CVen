@@ -50,6 +50,12 @@ const Dashboard = () => {
     <DashboardContainer>
       <Sidebar>
         {/* Your existing sidebar links */}
+        <StyledLink to="/admin/dashboard">Dashboard</StyledLink>
+          <StyledLink to="/admin/products">Product Management</StyledLink>
+          <StyledLink to="/admin/orders">Order Management</StyledLink>
+          <StyledLink to="/admin/customers">Customer Management</StyledLink>
+          <StyledLink to="/admin/analytics">Analytics</StyledLink>
+
       </Sidebar>
       <MainContent>
         <Routes>
