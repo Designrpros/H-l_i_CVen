@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import products from '../data/products';
+import { db } from '../firebaseConfig'; // Adjust the import path as necessary
+import { collection, getDocs } from 'firebase/firestore';
 import { useNavigate } from 'react-router-dom';
 
 const Wrapper = styled.div`
@@ -51,16 +52,45 @@ const FilterSelect = styled.select`
 `;
 
 const ProductListing = () => {
-  const [filteredProducts, setFilteredProducts] = useState(products);
+  const [filters, setFilters] = useState({ category: 'all', origin: 'all' });
+  const [filteredProducts, setFilteredProducts] = useState([]); // Define the state for filtered products
   const navigate = useNavigate();
-
-  const handleProductClick = (productId) => {
-    navigate(`/product/${productId}`);
-  };
 
   const handleFilterChange = (e, type) => {
     const value = e.target.value;
-    setFilteredProducts(products.filter(product => value === 'all' || product[type] === value));
+    setFilters(prevFilters => ({ ...prevFilters, [type]: value }));
+  };
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      const querySnapshot = await getDocs(collection(db, "products"));
+      let productsArray = querySnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      }));
+  
+      // Sort products by createdAt timestamp
+      productsArray.sort((a, b) => {
+        const aCreatedAt = a.createdAt ? new Date(a.createdAt.seconds * 1000) : new Date();
+        const bCreatedAt = b.createdAt ? new Date(b.createdAt.seconds * 1000) : new Date();
+        return aCreatedAt - bCreatedAt;
+      });
+  
+      // Apply filters
+      const filtered = productsArray.filter(product => {
+        return (filters.category === 'all' || product.category === filters.category) &&
+               (filters.origin === 'all' || product.origin === filters.origin);
+      });
+  
+      setFilteredProducts(filtered); // Update the filteredProducts state
+    };
+  
+    fetchProducts();
+  }, [filters]); // Re-fetch products when filters change
+  
+
+  const handleProductClick = (productId) => {
+    navigate(`/product/${productId}`);
   };
 
   return (
@@ -71,19 +101,19 @@ const ProductListing = () => {
       <FiltersContainer>
         <FilterSelect onChange={(e) => handleFilterChange(e, 'category')}>
           <option value="all">Alle kategorier</option>
-          {Array.from(new Set(products.map(product => product.category)))
+          {Array.from(new Set(filteredProducts.map(product => product.category)))
             .map(category => <option key={category} value={category}>{category}</option>)}
         </FilterSelect>
         <FilterSelect onChange={(e) => handleFilterChange(e, 'origin')}>
           <option value="all">Alle land</option>
-          {Array.from(new Set(products.map(product => product.origin)))
+          {Array.from(new Set(filteredProducts.map(product => product.origin)))
             .map(origin => <option key={origin} value={origin}>{origin}</option>)}
         </FilterSelect>
       </FiltersContainer>
       <Grid>
         {filteredProducts.map(product => (
           <ProductCard key={product.id} onClick={() => handleProductClick(product.id)}>
-            <img src={`${process.env.PUBLIC_URL}/images/${product.image}`} alt={product.name} />
+            <img src={product.image || `${process.env.PUBLIC_URL}/images/holicvenlogo.png`} alt={product.name} />
             <div className="content">
               <h3>{product.name}</h3>
               <p>{product.description}</p>

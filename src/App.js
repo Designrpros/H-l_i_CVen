@@ -23,7 +23,7 @@ function App() {
         <Route path="/cart" element={<Cart />} />
         <Route path="/success" element={<SuccessPage />} />
         <Route path="/cancel" element={<CancelPage />} />
-        {/* Add the route for the Dashboard component */}
+        {/* Correctly placed Dashboard route */}
         <Route path="/admin/*" element={<Dashboard />} />
       </Routes>
     </Router>

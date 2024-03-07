@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
-import { useCart } from '../context/CartContext'; // Adjust the import path as necessary
-import products from '../data/products';
+import { useCart } from '../context/CartContext';
+import { doc, getDoc } from 'firebase/firestore';
+import { db } from '../firebaseConfig'; // Adjust the import path as necessary
+
 
 const ShowcaseContainer = styled.div`
   display: flex;
@@ -82,8 +84,18 @@ const ProductShowcase = () => {
   const { addToCart } = useCart(); // This line must be at the top level, not inside any conditional or function
 
   useEffect(() => {
-    const productDetails = products.find(product => product.id.toString() === productId);
-    setProduct(productDetails);
+    const fetchProduct = async () => {
+      const docRef = doc(db, "products", productId); // Create a reference to the product document
+      const docSnap = await getDoc(docRef); // Fetch the document
+  
+      if (docSnap.exists()) {
+        setProduct({ id: docSnap.id, ...docSnap.data() }); // Set the product state with the fetched data
+      } else {
+        console.log("No such document!");
+      }
+    };
+  
+    fetchProduct();
   }, [productId]);
 
   if (!product) {
@@ -92,7 +104,7 @@ const ProductShowcase = () => {
 
   return (
     <ShowcaseContainer>
-      <ProductImage src={`${process.env.PUBLIC_URL}/images/${product.image}`} alt={product.name} />
+      <ProductImage src={product.image ? product.image : `${process.env.PUBLIC_URL}/images/holicvenlogo.png`} alt={product.name} />
       <ProductContent>
         <ProductName>{product.name}</ProductName>
         <ProductDescription>{product.description}</ProductDescription>

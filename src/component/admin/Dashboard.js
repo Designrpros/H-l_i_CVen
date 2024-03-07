@@ -1,73 +1,110 @@
-// Dashboard.js
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
-import ProductManagement from './ProductManagement';
 import OrderManagement from './OrderManagement';
 import CustomerManagement from './CustomerManagement';
 import Analytics from './Analytics';
-import DashboardOverview from './DashboardOverview'; // Ensure this path is correct
-import CustomersWidget from './widget/CustomersWidget'; // Adjust the import path as necessary
-import OrdersWidget from './widget/OrdersWidget'; // Adjust the import path as necessary
-import ProductsWidget from './widget/ProductsWidget'; // Adjust the import path as necessary
+import DashboardOverview from './DashboardOverview';
+import ProductManagement from './ProductManagement';
 
-const DashboardContainer = styled.div`
-  display: flex;
-  flex-direction: row; // Ensures sidebar is on the left
-  height: calc(100vh); // Adjust 64px according to your toolbar's height
-  margin-top: 55px; // Same as your toolbar's height
-`;
-
-const Sidebar = styled.div`
-  width: 250px; // or whatever your sidebar width is
-  background-color: #333;
+const Toolbar = styled.nav`
+  position: fixed;
+  top: 56px; // Adjust this value to the height of your primary toolbar
+  left: 0;
+  width: 100%;
+  background-color: #333; // Darker gray
   color: white;
-  padding: 20px;
-  height: 100%; // Makes sure it fills the vertical space
+  display: flex;
+  justify-content: center; // Center the content
+  align-items: center;
+  padding: 0 20px;
+  height: 56px;
+  box-sizing: border-box;
+  z-index: 100;
 `;
 
-const MainContent = styled.div`
-  flex-grow: 1;
-  padding: 20px;
-  background-color: #f4f4f4;
-  overflow-y: auto; // Adds scroll to content if needed
+const ToolbarContent = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  max-width: 1200px; // Adjust based on your design preference
+
+  @media (max-width: 768px) {
+    display: none; // Hide the toolbar content on mobile
+  }
 `;
 
-
-const StyledLink = styled(Link)`
+const ToolbarLink = styled(Link)`
   color: white;
   text-decoration: none;
-  display: block;
-  margin: 10px 0;
+  margin: 0 15px;
 
   &:hover {
     text-decoration: underline;
   }
 `;
 
-const Dashboard = () => {
-  return (
-    <DashboardContainer>
-      <Sidebar>
-        {/* Your existing sidebar links */}
-        <StyledLink to="/admin/dashboard">Dashboard</StyledLink>
-          <StyledLink to="/admin/products">Product Management</StyledLink>
-          <StyledLink to="/admin/orders">Order Management</StyledLink>
-          <StyledLink to="/admin/customers">Customer Management</StyledLink>
-          <StyledLink to="/admin/analytics">Analytics</StyledLink>
+const MobileMenuIcon = styled.div`
+  display: none;
+  font-size: 24px;
+  cursor: pointer;
 
-      </Sidebar>
+  @media (max-width: 768px) {
+    display: block;
+  }
+`;
+
+const MobileMenu = styled.div`
+  display: none;
+
+  @media (max-width: 768px) {
+    display: ${props => props.isOpen ? 'flex' : 'none'};
+    flex-direction: column;
+    position: fixed;
+    top: 112px; // Adjust based on the combined height of your toolbars
+    left: 0;
+    width: 100%;
+    background-color: #333; // Consistent with the toolbar
+    padding: 20px;
+    box-sizing: border-box;
+  }
+`;
+
+const MainContent = styled.div`
+  padding-top: 112px; // Adjust this value based on the combined height of your toolbars
+  overflow-y: auto;
+`;
+
+const Dashboard = () => {
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  const toggleMobileMenu = () => {
+    setIsMobileMenuOpen(!isMobileMenuOpen);
+  };
+
+  return (
+    <>
+      <Toolbar>
+        <ToolbarContent>
+          <ToolbarLink to="/admin/dashboard">Dashboard</ToolbarLink>
+          <ToolbarLink to="/admin/products">Product Management</ToolbarLink>
+          <ToolbarLink to="/admin/orders">Order Management</ToolbarLink>
+          <ToolbarLink to="/admin/customers">Customer Management</ToolbarLink>
+          <ToolbarLink to="/admin/analytics">Analytics</ToolbarLink>
+        </ToolbarContent>
+        <MobileMenuIcon onClick={toggleMobileMenu}>☰</MobileMenuIcon>
+      </Toolbar>
+      <MobileMenu isOpen={isMobileMenuOpen}>
+        <ToolbarLink to="/admin/dashboard">Dashboard</ToolbarLink>
+        <ToolbarLink to="/admin/products">Product Management</ToolbarLink>
+        <ToolbarLink to="/admin/orders">Order Management</ToolbarLink>
+        <ToolbarLink to="/admin/customers">Customer Management</ToolbarLink>
+        <ToolbarLink to="/admin/analytics">Analytics</ToolbarLink>
+      </MobileMenu>
       <MainContent>
         <Routes>
-          <Route path="dashboard" element={
-            <>
-              <DashboardOverview />
-              <CustomersWidget />
-              <OrdersWidget />
-              <ProductsWidget />
-              {/* You can arrange these widgets as needed */}
-            </>
-          } />
+          <Route path="dashboard" element={<DashboardOverview />} />
           <Route path="products" element={<ProductManagement />} />
           <Route path="orders" element={<OrderManagement />} />
           <Route path="customers" element={<CustomerManagement />} />
@@ -75,7 +112,7 @@ const Dashboard = () => {
           {/* Add more routes as needed */}
         </Routes>
       </MainContent>
-    </DashboardContainer>
+    </>
   );
 };
 

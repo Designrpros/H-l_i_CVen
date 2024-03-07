@@ -1,11 +1,10 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate instead of useHistory
-import products from '../data/products';
-
+import { useNavigate } from 'react-router-dom';
+import { collection, getDocs } from 'firebase/firestore';
+import { db } from '../firebaseConfig';
 import Brazil from './img/Brazil.png'; // Placeholder path, replace with your actual icon
 import Colombia from './img/Colombia.png';
-
 const Icon = styled.img`
   width: 50px; /* Adjust size as needed */
   height: auto;
@@ -89,20 +88,30 @@ const IconContainer = styled.div`
 `;
 
 const CoffeeCategories = () => {
-  let navigate = useNavigate(); // Use the useNavigate hook for navigation
+  let navigate = useNavigate();
+  const [products, setProducts] = useState([]);
 
-  const navigateToProductShowcase = (productId) => {
-    console.log(`Navigating to product with ID: ${productId}`); // Debugging line
-    navigate(`/product/${productId}`); // Navigate to the ProductShowcase page with the product ID
-  };
-    
-  // Only display the first 4 products
-  const displayedProducts = products.slice(0, 3);
+  useEffect(() => {
+    const fetchProducts = async () => {
+      const querySnapshot = await getDocs(collection(db, "products"));
+      const productsArray = querySnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      }));
+      setProducts(productsArray);
+    };
+
+    fetchProducts();
+  }, []);
+
+  // Assuming you want to display specific categories, you might filter them here
+  // For demonstration, this example will display all fetched products
+  const displayedProducts = products.slice(0, 3); // Adjust this line if you need specific filtering
 
   return (
     <SectionWrapper id="sustainable-coffee">
       <Title>BÆREDYKTIG KAFFE</Title>
-      {/* DescriptionBox and its content remain unchanged */}
+      {/* DescriptionBox content remains unchanged */}
       <DescriptionBox>
       <p>Som sin kaffeleverandør har Høl i CVen valgt Den Gyldne Bønne as, et lokalt foretak som i snart 25 år har importert, brent og solgt kaffe til folk og bedrifter.</p>
       <p>Den Gyldne Bønne as markedsfører nybrente kaffespesialiteter fra hele verden og råvarene er et representativt utvalg av spesialiteter og variasjoner fra de fleste kaffeproduserende land. Kaffen foredles håndverksmessig i eget brenneri på Vøyenenga i Bærum.</p>
@@ -119,9 +128,10 @@ const CoffeeCategories = () => {
 
       <Title>Utvalgte Produkter</Title>
       <CategoriesWrapper>
-      {displayedProducts.map(({ id, name, description, image }) => (
-          <ProductCard key={id} onClick={() => navigateToProductShowcase(id)}>
-            <img src={`${process.env.PUBLIC_URL}/images/${image}`} alt={name} />
+        {displayedProducts.map(({ id, name, description, image }) => (
+          <ProductCard key={id} onClick={() => navigate(`/product/${id}`)}>
+            {/* Use the image URL directly if it's stored in Firestore */}
+            <img src={image || `${process.env.PUBLIC_URL}/images/holicvenlogo.png`} alt={name} />
             <div className="card-content">
               <h3 className="card-title">{name}</h3>
               <p className="card-description">{description}</p>
@@ -129,11 +139,8 @@ const CoffeeCategories = () => {
           </ProductCard>
         ))}
       </CategoriesWrapper>
-
     </SectionWrapper>
   );
 };
-
-
 
 export default CoffeeCategories;
