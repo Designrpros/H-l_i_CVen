@@ -18,9 +18,12 @@ const CustomerItem = styled.div`
 
 const CustomerManagement = () => {
   const [customers, setCustomers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     const fetchOrders = async () => {
+      setLoading(true);
       try {
         const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/orders`);
         if (!response.ok) {
@@ -28,8 +31,9 @@ const CustomerManagement = () => {
         }
         const { orders } = await response.json();
 
+        // Aggregate orders by customerId
         const customerMap = orders.reduce((acc, order) => {
-          // Assuming `customerId` is a field in your order data
+          // Assuming each order has a customerId and customerEmail
           const { customerId, customerEmail } = order;
           if (!acc[customerId]) {
             acc[customerId] = {
@@ -43,14 +47,26 @@ const CustomerManagement = () => {
           return acc;
         }, {});
 
-        setCustomers(Object.values(customerMap));
+        // Convert the map to an array
+        const customerArray = Object.keys(customerMap).map(customerId => ({
+          ...customerMap[customerId],
+          customerId,
+        }));
+
+        setCustomers(customerArray);
       } catch (error) {
         console.error('Error fetching orders:', error);
+        setError('Failed to load customer data.');
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchOrders();
   }, []);
+
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error}</div>;
 
   return (
     <Container>
