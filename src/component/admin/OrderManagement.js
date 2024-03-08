@@ -7,38 +7,29 @@ const OrdersContainer = styled.div`
   min-height: 100vh;
 `;
 
-const OrdersList = styled.div`
-  max-height: 80vh;
-  overflow-y: auto;
+const OrdersTable = styled.table`
+  width: 100%;
+  border-collapse: collapse;
   background: white;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  padding: 20px;
 `;
 
-const OrderItem = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+const TableHeader = styled.th`
   padding: 10px;
   border-bottom: 1px solid #eee;
+  background-color: #f5f5f5;
+`;
 
-  &:last-child {
-    border-bottom: none;
+const TableRow = styled.tr`
+  &:nth-child(even) {
+    background-color: #f2f2f2;
   }
 `;
 
-const DetailContainer = styled.div`
-  display: flex;
-  align-items: center;
-  overflow-x: auto;
-  white-space: nowrap;
-`;
-
-const Detail = styled.p`
-  margin: 0 10px;
-  color: #666;
-  flex: none; /* Prevent flex items from growing or shrinking */
+const TableCell = styled.td`
+  padding: 10px;
+  border-bottom: 1px solid #eee;
 `;
 
 const Header = styled.h1`
@@ -54,6 +45,9 @@ const LoadingMsg = styled.p`
   color: #333;
 `;
 
+const Checkbox = styled.input`
+  margin-right: 10px;
+`;
 
 const OrderManagement = () => {
   const [orders, setOrders] = useState([]);
@@ -71,7 +65,7 @@ const OrderManagement = () => {
           throw new Error(`Failed to fetch: ${response.status} ${response.statusText}`);
         }
         const data = await response.json();
-        setOrders(data.orders);
+        setOrders(data.orders.map(order => ({ ...order, shipped: false }))); // Add 'shipped' property
       } catch (error) {
         setError("Failed to fetch orders. Please try again later.");
         console.error("Error fetching orders:", error);
@@ -83,26 +77,42 @@ const OrderManagement = () => {
     fetchOrders();
   }, []);
 
+  const handleShippedChange = (orderId) => {
+    setOrders(orders.map(order => order.id === orderId ? { ...order, shipped: !order.shipped } : order));
+  };
+
   if (loading) return <LoadingMsg>Loading orders...</LoadingMsg>;
   if (error) return <ErrorMsg>{error}</ErrorMsg>;
 
   return (
     <OrdersContainer>
       <Header>Order Management</Header>
-      <OrdersList>
-        {orders.sort((a, b) => b.createdAt._seconds - a.createdAt._seconds)
-          .map((order) => (
-            <OrderItem key={order.id}>
-            <DetailContainer>
-              <Detail><strong>Date:</strong> {new Date(order.createdAt._seconds * 1000).toLocaleDateString()}</Detail>
-              <Detail><strong>Price:</strong> {order.totalAmount / 100} NOK</Detail>
-              <Detail><strong>Product Name:</strong> {order.productsPurchased.map(p => p.name).join(', ')}</Detail>
-              <Detail><strong>Customer's Name:</strong> {order.email}</Detail>
-              <Detail><strong>Order ID:</strong> {order.id}</Detail>
-            </DetailContainer>
-          </OrderItem>
+      <OrdersTable>
+        <thead>
+          <tr>
+            <TableHeader>Shipped</TableHeader>
+            <TableHeader>Date</TableHeader>
+            <TableHeader>Price</TableHeader>
+            <TableHeader>Product Name</TableHeader>
+            <TableHeader>Customer's Name</TableHeader>
+            <TableHeader>Order ID</TableHeader>
+          </tr>
+        </thead>
+        <tbody>
+          {orders.sort((a, b) => b.createdAt._seconds - a.createdAt._seconds).map((order) => (
+            <TableRow key={order.id}>
+              <TableCell>
+                <Checkbox type="checkbox" checked={order.shipped} onChange={() => handleShippedChange(order.id)} />
+              </TableCell>
+              <TableCell>{new Date(order.createdAt._seconds * 1000).toLocaleDateString()}</TableCell>
+              <TableCell>{order.totalAmount / 100} NOK</TableCell>
+              <TableCell>{order.productsPurchased.map(p => p.name).join(', ')}</TableCell>
+              <TableCell>{order.email}</TableCell>
+              <TableCell>{order.id}</TableCell>
+            </TableRow>
           ))}
-      </OrdersList>
+        </tbody>
+      </OrdersTable>
     </OrdersContainer>
   );
 };
