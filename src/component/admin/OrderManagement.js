@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { db } from '../../firebaseConfig'; // Adjust the import path as necessary
+import { collection, getDocs, doc, updateDoc } from 'firebase/firestore';
 
 const OrdersContainer = styled.div`
   padding: 20px;
@@ -72,68 +73,67 @@ const OrderManagement = () => {
       setLoading(true);
       setError('');
       try {
-        const querySnapshot = await db.collection('orders').get();
+        const querySnapshot = await getDocs(collection(db, 'orders'));
         const fetchedOrders = querySnapshot.docs.map(doc => ({
           id: doc.id,
           ...doc.data(),
         }));
         setOrders(fetchedOrders.map(order => ({
           ...order,
-          // Ensure shipped and confirmationSent have defaults if not present
           shipped: order.shipped || false,
           confirmationSent: order.confirmationSent || false,
         })));
       } catch (error) {
         console.error("Error fetching orders:", error);
         setError("Failed to fetch orders. Please try again later.");
-      } finally {
+        } finally {
         setLoading(false);
+        }
+        };
+        
+        fetchOrders();
+        }, []);
+  
+  
+
+    const handleShippedChange = async (orderId, currentStatus) => {
+      const orderRef = doc(db, 'orders', orderId);
+      try {
+        await updateDoc(orderRef, {
+          shipped: !currentStatus,
+        });
+        // Update local state to reflect the change
+        setOrders(orders.map(order => order.id === orderId ? { ...order, shipped: !currentStatus } : order));
+      } catch (error) {
+        console.error("Error updating shipped status:", error);
       }
     };
   
-    fetchOrders();
-  }, []);
-  
-
-  const handleShippedChange = async (orderId) => {
-    const orderRef = db.collection('orders').doc(orderId);
-    const currentOrder = orders.find(order => order.id === orderId);
-    try {
-      await orderRef.update({
-        shipped: !currentOrder.shipped,
-      });
-      // Update local state to reflect the change
-      setOrders(orders.map(order => order.id === orderId ? { ...order, shipped: !order.shipped } : order));
-    } catch (error) {
-      console.error("Error updating shipped status:", error);
-    }
-  };
   
   
-  
-  const handleSendConfirmation = async (orderId) => {
-    const endpoint = `${process.env.REACT_APP_BACKEND_URL}/api/send-confirmation`;
-    try {
-      const response = await fetch(endpoint, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ orderId }),
-      });
-      if (!response.ok) {
-        throw new Error('Failed to send confirmation email');
+    const handleSendConfirmation = async (orderId) => {
+      try {
+        const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/send-confirmation`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ orderId }),
+        });
+        if (!response.ok) {
+          throw new Error('Failed to send confirmation email');
+        }
+        // Assuming the email was sent successfully, update Firestore
+        const orderRef = doc(db, 'orders', orderId);
+        await updateDoc(orderRef, {
+          confirmationSent: true,
+        });
+        // Update local state to reflect the change
+        setOrders(orders.map(order => order.id === orderId ? { ...order, confirmationSent: true } : order));
+      } catch (error) {
+        console.error('Error sending confirmation email:', error);
       }
-      // Assuming the email was sent successfully, update Firebase
-      const orderRef = db.collection('orders').doc(orderId);
-      await orderRef.update({
-        confirmationSent: true,
-      });
-      setOrders(orders.map(order => order.id === orderId ? { ...order, confirmationSent: true } : order));
-    } catch (error) {
-      console.error('Error sending confirmation email:', error);
-    }
-  };
+    };
   
   
   
@@ -161,7 +161,7 @@ const OrderManagement = () => {
         {orders.sort((a, b) => b.createdAt._seconds - a.createdAt._seconds).map((order) => (
           <TableRow key={order.id}>
             <TableCell>
-                <Checkbox type="checkbox" checked={order.shipped} onChange={() => handleShippedChange(order.id)} />
+            <Checkbox type="checkbox" checked={order.shipped} onChange={() => handleShippedChange(order.id, order.shipped)} />
               </TableCell>
               <TableCell>
                 <SendButton
