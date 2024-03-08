@@ -45,15 +45,18 @@ const SuccessPage = () => {
       try {
         const response = await fetch(`/api/order/${sessionId}`);
         if (!response.ok) {
-          throw new Error('Failed to fetch order details');
+          throw new Error(`Failed to fetch order details, status: ${response.status}`);
         }
-        const data = await response.json();
-        setOrderDetails(data);
+        try {
+          const data = await response.json();
+          setOrderDetails(data);
+        } catch (jsonError) {
+          console.error('Error parsing JSON:', jsonError);
+        }
       } catch (error) {
         console.error('Error fetching order details:', error);
       }
-    };
-
+    };    
     if (sessionId) {
       fetchOrderDetails();
     }
