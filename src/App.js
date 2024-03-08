@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import ReactGA from 'react-ga4';
 import Home from './Pages/Home';
@@ -16,20 +16,22 @@ import './App.css';
 // Initialize GA4 with your Measurement ID
 ReactGA.initialize('G-ND7ZZY1GLW');
 
-function usePageViews() {
-  let location = useLocation();
-  useEffect(() => {
-    // Track page view on route change
-    ReactGA.send({ hitType: "pageview", page: location.pathname + location.search });
-  }, [location]);
-}
-
-function App() {
-  usePageViews(); // Call our page view hook
+const App = () => {
+  // Define a component that uses the useLocation hook
+  const TrackPageViews = () => {
+    let location = useLocation();
+    React.useEffect(() => {
+      // Track page view on route change
+      ReactGA.send({ hitType: "pageview", page: location.pathname + location.search });
+    }, [location]);
+    return null; // This component does not render anything
+  };
 
   return (
     <Router>
       <Toolbar />
+      {/* Place the TrackPageViews component inside the Router but outside of Routes */}
+      <TrackPageViews />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/product/:productId" element={<ProductShowcase />} />
@@ -41,6 +43,6 @@ function App() {
       </Routes>
     </Router>
   );
-}
+};
 
 export default App;
