@@ -96,16 +96,18 @@ const OrderManagement = () => {
 
   const handleShippedChange = async (orderId) => {
     const orderRef = db.collection('orders').doc(orderId);
-    const shippedStatus = orders.find(order => order.id === orderId).shipped;
+    const currentOrder = orders.find(order => order.id === orderId);
     try {
       await orderRef.update({
-        shipped: !shippedStatus,
+        shipped: !currentOrder.shipped,
       });
-      setOrders(orders.map(order => order.id === orderId ? { ...order, shipped: !shippedStatus } : order));
+      // Update local state to reflect the change
+      setOrders(orders.map(order => order.id === orderId ? { ...order, shipped: !order.shipped } : order));
     } catch (error) {
       console.error("Error updating shipped status:", error);
     }
   };
+  
   
   
   const handleSendConfirmation = async (orderId) => {
