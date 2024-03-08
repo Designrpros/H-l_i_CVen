@@ -90,9 +90,9 @@ const OrderManagement = () => {
   }, []);
 
   const handleShippedChange = (orderId) => {
-    setOrders(data.orders.map(order => ({ ...order, shipped: false, confirmationSent: false })));
+    setOrders(orders.map(order => order.id === orderId ? { ...order, shipped: !order.shipped } : order));
   };
-
+  
   const handleSendConfirmation = async (orderId) => {
     const endpoint = `${process.env.REACT_APP_BACKEND_URL}/api/send-confirmation`;
     try {
