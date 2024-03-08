@@ -31,26 +31,29 @@ const CustomerManagement = () => {
         const data = await response.json();
         const orders = data.orders;
 
-        const customersData = {};
-        orders.forEach(order => {
-          const customerId = order.customerId || 'unknown'; // Fallback to 'unknown' if customerId is not set
-          if (!customersData[customerId]) {
-            customersData[customerId] = {
-              email: order.email, // Assuming email is stored directly on the order
+        const customersData = orders.reduce((acc, order) => {
+          // Assuming each order has a unique customer identifier
+          const customerId = order.customerId || 'unknown'; // Use a unique identifier for each customer
+          if (!acc[customerId]) {
+            acc[customerId] = {
+              email: order.email, // Assuming email is directly on the order
               orders: [],
               totalSpent: 0,
             };
           }
-          customersData[customerId].orders.push(order);
-          customersData[customerId].totalSpent += order.totalAmount;
-        });
+          acc[customerId].orders.push(order);
+          acc[customerId].totalSpent += order.totalAmount;
+          return acc;
+        }, {});
 
-        // Additional metrics can be calculated here
-        Object.values(customersData).forEach(customer => {
-          customer.averageOrderValue = customer.orders.length ? (customer.totalSpent / customer.orders.length).toFixed(2) : 0;
-        });
+        // Convert the object back into an array for rendering
+        const customersArray = Object.keys(customersData).map(key => ({
+          ...customersData[key],
+          customerId: key,
+          averageOrderValue: customersData[key].orders.length ? (customersData[key].totalSpent / customersData[key].orders.length) : 0,
+        }));
 
-        setCustomers(Object.values(customersData));
+        setCustomers(customersArray);
       } catch (error) {
         setError("Failed to fetch orders. Please try again later.");
         console.error("Error fetching orders:", error);
@@ -71,8 +74,7 @@ const CustomerManagement = () => {
             <p>Email: {customer.email}</p>
             <p>Total Spent: {(customer.totalSpent / 100).toFixed(2)} NOK</p>
             <p>Orders: {customer.orders.length}</p>
-            <p>Average Order Value: {customer.averageOrderValue} NOK</p>
-            {/* You can add more detailed metrics here */}
+            <p>Average Order Value: {(customer.averageOrderValue / 100).toFixed(2)} NOK</p>
           </CustomerItem>
         ))}
       </CustomerList>
