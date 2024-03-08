@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
+import { db } from '../../firebaseConfig'; // Ensure this import path is correct
 
 const Container = styled.div`
   padding: 20px;
@@ -29,40 +30,25 @@ const CustomerManagement = () => {
   const [error, setError] = useState('');
 
   useEffect(() => {
-    const fetchOrders = async () => {
+    const fetchCustomers = async () => {
+      setLoading(true);
+      setError('');
       try {
-        const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/orders`);
-        if (!response.ok) {
-          throw new Error('Failed to fetch orders');
-        }
-        const data = await response.json();
-        const orders = data.orders;
-
-        // Aggregate customer data from orders
-        const customerData = orders.reduce((acc, order) => {
-          const { customerId, customerEmail } = order;
-          if (!acc[customerId]) {
-            acc[customerId] = {
-              email: customerEmail,
-              totalSpent: 0,
-              orders: [],
-            };
-          }
-          acc[customerId].totalSpent += order.totalAmount;
-          acc[customerId].orders.push(order);
-          return acc;
-        }, {});
-
-        setCustomers(Object.values(customerData));
+        const querySnapshot = await db.collection('customers').get();
+        const customersData = querySnapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+        setCustomers(customersData);
       } catch (error) {
+        console.error('Error fetching customers:', error);
         setError('Failed to load customers.');
-        console.error(error);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchOrders();
+    fetchCustomers();
   }, []);
 
   if (loading) return <Container>Loading...</Container>;
@@ -72,11 +58,11 @@ const CustomerManagement = () => {
     <Container>
       <h1>Customer Management</h1>
       <CustomerList>
-        {customers.map((customer, index) => (
-          <CustomerItem key={index}>
+        {customers.map((customer) => (
+          <CustomerItem key={customer.id}>
             <Info>Email: {customer.email}</Info>
             <Info>Total Spent: {(customer.totalSpent / 100).toFixed(2)} NOK</Info>
-            <Info>Orders: {customer.orders.length}</Info>
+            <Info>Orders: {customer.orders?.length || 0}</Info>
           </CustomerItem>
         ))}
       </CustomerList>
