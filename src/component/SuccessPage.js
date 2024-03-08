@@ -66,7 +66,7 @@ const SuccessPage = () => {
       <Text>Transaksjonen var vellykket. Her er detaljene for din bestilling:</Text>
       <OrderDetails>
         <DetailItem><strong>Ordre-ID:</strong> {orderDetails.id || 'Laster...'}</DetailItem>
-        <DetailItem><strong>Totalbeløp:</strong> {orderDetails.totalAmount ? `${orderDetails.totalAmount} NOK` : 'Laster...'}</DetailItem>
+        <DetailItem><strong>Totalbeløp:</strong> {orderDetails.totalAmount / 100 ? `${orderDetails.totalAmount} NOK` : 'Laster...'}</DetailItem>
         <DetailItem><strong>Varer:</strong></DetailItem>
         <ul>
           {orderDetails.productsPurchased.length > 0 ? orderDetails.productsPurchased.map((item, index) => (
