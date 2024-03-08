@@ -2,7 +2,33 @@ import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 
-// Styled components here
+const Container = styled.div`
+  max-width: 600px;
+  margin: 40px auto;
+  padding: 20px;
+  text-align: center;
+`;
+
+const Title = styled.h2`
+  color: #4CAF50;
+`;
+
+const Text = styled.p`
+  margin: 20px 0;
+`;
+
+const OrderDetails = styled.div`
+  text-align: left;
+  background: #f9f9f9;
+  padding: 20px;
+  border-radius: 5px;
+  margin-top: 20px;
+`;
+
+const DetailItem = styled.p`
+  margin: 10px 0;
+`;
+
 
 const SuccessPage = () => {
   const location = useLocation();
