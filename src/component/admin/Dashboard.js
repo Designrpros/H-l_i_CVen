@@ -9,14 +9,14 @@ import ProductManagement from './ProductManagement';
 
 const Toolbar = styled.nav`
   position: fixed;
-  top: 56px; // Adjust this value to the height of your primary toolbar
+  top: 56px;
   left: 0;
   width: 100%;
-  background-color: #333; // Darker gray
+  background-color: #333;
   color: white;
   display: flex;
-  justify-content: center; // Center the content
   align-items: center;
+  justify-content: space-between; // Adjusted for space-between
   padding: 0 20px;
   height: 56px;
   box-sizing: border-box;
@@ -25,10 +25,9 @@ const Toolbar = styled.nav`
 
 const ToolbarContent = styled.div`
   display: flex;
-  justify-content: space-between;
+  justify-content: start; // Adjusted for start alignment
   align-items: center;
-  width: 100%;
-  max-width: 1200px; // Adjust based on your design preference
+  width: auto; // Adjusted to auto to take only necessary space
 
   @media (max-width: 768px) {
     display: none; // Hide the toolbar content on mobile
@@ -46,28 +45,39 @@ const ToolbarLink = styled(Link)`
 `;
 
 const MobileMenuIcon = styled.div`
-  display: none;
+  display: none; // Initially hidden
   font-size: 24px;
   cursor: pointer;
 
   @media (max-width: 768px) {
-    display: block;
+    display: flex; // Show on mobile
+    margin-left: auto; // Push everything else to the right
   }
 `;
 
 const MobileMenu = styled.div`
-  display: none;
+  display: none; // Initially hidden
 
   @media (max-width: 768px) {
     display: ${props => props.isOpen ? 'flex' : 'none'};
     flex-direction: column;
     position: fixed;
-    top: 112px; // Adjust based on the combined height of your toolbars
+    top: 112px;
     left: 0;
     width: 100%;
-    background-color: #333; // Consistent with the toolbar
+    background: #333;
     padding: 20px;
     box-sizing: border-box;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    z-index: 100;
+
+    a {
+      color: white;
+      text-decoration: none;
+      margin: 10px 0;
+      font-size: 1.2rem;
+      font-family: 'Playfair Display', serif;
+    }
   }
 `;
 
@@ -93,7 +103,7 @@ const Dashboard = () => {
           <ToolbarLink to="/admin/customers">Customer Management</ToolbarLink>
           <ToolbarLink to="/admin/analytics">Analytics</ToolbarLink>
         </ToolbarContent>
-        <MobileMenuIcon onClick={toggleMobileMenu}>☰</MobileMenuIcon>
+          <MobileMenuIcon onClick={toggleMobileMenu}>☰</MobileMenuIcon>
       </Toolbar>
       <MobileMenu isOpen={isMobileMenuOpen}>
         <ToolbarLink to="/admin/dashboard">Dashboard</ToolbarLink>
