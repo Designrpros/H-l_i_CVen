@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { db } from '../../firebaseConfig'; // Ensure this import path is correct
-import { collection, getDocs } from "firebase/firestore"; // Import collection and getDocs
+import { collection, getDocs, query, where } from "firebase/firestore"; // Import necessary functions
 
 const Container = styled.div`
   padding: 20px;
@@ -25,32 +25,76 @@ const Info = styled.p`
   margin: 5px 0;
 `;
 
+const OrdersTable = styled.table`
+  width: 100%;
+  margin-top: 10px;
+  border-collapse: collapse;
+`;
+
+const TableHeader = styled.th`
+  background-color: #eee;
+  padding: 10px;
+`;
+
+const TableRow = styled.tr`
+  &:nth-child(even) {
+    background-color: #f9f9f9;
+  }
+`;
+
+const TableCell = styled.td`
+  padding: 10px;
+  border: 1px solid #ddd;
+`;
+
 const CustomerManagement = () => {
   const [customers, setCustomers] = useState([]);
+  const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
   useEffect(() => {
-    const fetchCustomers = async () => {
+    const fetchData = async () => {
       setLoading(true);
       setError('');
       try {
-        const querySnapshot = await getDocs(collection(db, 'customers'));
-        const customersData = querySnapshot.docs.map(doc => ({
+        // Fetch customers
+        const customersSnapshot = await getDocs(collection(db, 'customers'));
+        const customersData = customersSnapshot.docs.map(doc => ({
           id: doc.id,
           ...doc.data(),
         }));
-        setCustomers(customersData);
+        console.log("Customers:", customersData); // Debugging
+  
+        // Fetch orders
+        const ordersSnapshot = await getDocs(collection(db, 'orders'));
+        const ordersData = ordersSnapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+        console.log("Orders:", ordersData); // Debugging
+  
+        // Map orders to their respective customers
+        const customersWithOrders = customersData.map(customer => ({
+          ...customer,
+          orders: ordersData.filter(order => order.customerId === customer.id),
+        }));
+  
+        console.log("Customers with Orders:", customersWithOrders); // Debugging
+  
+        setCustomers(customersWithOrders);
+        setOrders(ordersData);
       } catch (error) {
-        console.error('Error fetching customers:', error);
-        setError('Failed to load customers.');
+        console.error('Error fetching data:', error);
+        setError('Failed to load data.');
       } finally {
         setLoading(false);
       }
     };
-
-    fetchCustomers();
+  
+    fetchData();
   }, []);
+  
 
   if (loading) return <Container>Loading...</Container>;
   if (error) return <Container>Error: {error}</Container>;
@@ -64,6 +108,26 @@ const CustomerManagement = () => {
             <Info>Email: {customer.email}</Info>
             <Info>Total Spent: {(customer.totalSpent / 100).toFixed(2)} NOK</Info>
             <Info>Orders: {customer.orders?.length || 0}</Info>
+            {customer.orders && customer.orders.length > 0 && (
+              <OrdersTable>
+                <thead>
+                  <tr>
+                    <TableHeader>Date</TableHeader>
+                    <TableHeader>Amount</TableHeader>
+                    <TableHeader>Total Price</TableHeader>
+                  </tr>
+                </thead>
+                <tbody>
+                  {customer.orders.map(order => (
+                    <TableRow key={order.id}>
+                      <TableCell>{order.date}</TableCell>
+                      <TableCell>{order.amount}</TableCell>
+                      <TableCell>{(order.totalPrice / 100).toFixed(2)} NOK</TableCell>
+                    </TableRow>
+                  ))}
+                </tbody>
+              </OrdersTable>
+            )}
           </CustomerItem>
         ))}
       </CustomerList>

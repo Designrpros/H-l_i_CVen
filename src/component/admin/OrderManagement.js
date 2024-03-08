@@ -146,42 +146,44 @@ const OrderManagement = () => {
     <OrdersContainer>
       <Header>Order Management</Header>
       <OrdersTable>
-      <thead>
-        <tr>
-          <TableHeader>Shipped</TableHeader>
-          <TableHeader>Send Confirmation</TableHeader>
-          <TableHeader>Date</TableHeader>
-          <TableHeader>Price</TableHeader>
-          <TableHeader>Product Name</TableHeader>
-          <TableHeader>Customer's Name</TableHeader>
-          <TableHeader>Order ID</TableHeader>
-        </tr>
-      </thead>
-      <tbody>
-        {orders.sort((a, b) => b.createdAt._seconds - a.createdAt._seconds).map((order) => (
-          <TableRow key={order.id}>
-            <TableCell>
-            <Checkbox type="checkbox" checked={order.shipped} onChange={() => handleShippedChange(order.id, order.shipped)} />
+        <thead>
+          <tr>
+            <TableHeader>Shipped</TableHeader>
+            <TableHeader>Send Confirmation</TableHeader>
+            <TableHeader>Date</TableHeader>
+            <TableHeader>Price</TableHeader>
+            <TableHeader>Product Name</TableHeader>
+            <TableHeader>Amount</TableHeader> {/* New column for coffee amount */}
+            <TableHeader>Customer's Name</TableHeader>
+            <TableHeader>Order ID</TableHeader>
+          </tr>
+        </thead>
+        <tbody>
+          {orders.map((order) => (
+            <TableRow key={order.id}>
+              <TableCell>
+                <Checkbox type="checkbox" checked={order.shipped} onChange={() => handleShippedChange(order.id, order.shipped)} />
               </TableCell>
               <TableCell>
                 <SendButton
                   onClick={() => handleSendConfirmation(order.id)}
                   confirmationSent={order.confirmationSent}
-                  disabled={order.confirmationSent} // Optionally disable the button
+                  disabled={order.confirmationSent}
                 >
                   Send
                 </SendButton>
-              </TableCell> 
-               <TableCell>{new Date(order.createdAt._seconds * 1000).toLocaleDateString()}</TableCell>
-                <TableCell>{order.totalAmount / 100} NOK</TableCell>
-                <TableCell>{order.productsPurchased.map(p => p.name).join(', ')}</TableCell>
-                <TableCell>{order.email}</TableCell>
-                <TableCell>{order.id}</TableCell>
+              </TableCell>
+              <TableCell>{order.createdAt.toDate().toLocaleDateString()}</TableCell> {/* Adjusted for correct date conversion */}
+              <TableCell>{order.totalAmount / 100} NOK</TableCell>
+              <TableCell>{order.productsPurchased.map(p => p.name).join(', ')}</TableCell>
               <TableCell>
-            </TableCell>
-          </TableRow>
-        ))}
-      </tbody>
+                {order.productsPurchased.map(p => `${p.quantity} pcs`).join(', ')} {/* Displaying the quantity */}
+              </TableCell>
+              <TableCell>{order.email}</TableCell>
+              <TableCell>{order.id}</TableCell>
+            </TableRow>
+          ))}
+        </tbody>
       </OrdersTable>
     </OrdersContainer>
   );
