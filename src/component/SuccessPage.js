@@ -73,7 +73,7 @@ const SuccessPage = () => {
             <li key={index}>{item.name} - Antall: {item.quantity} - Pris per enhet: {item.unitPrice / 100} NOK</li>
           )) : <li>Laster...</li>}
         </ul>
-        <DetailItem><strong>Leveringsadresse:</strong> {orderDetails.shippingDetails.name ? `${orderDetails.shippingDetails.name}, ${orderDetails.shippingDetails.address.line1}, ${orderDetails.shippingDetails.address.city}` : 'Laster...'}</DetailItem>
+        <DetailItem><strong>Leveringsadresse:</strong> {orderDetails.shippingDetails && orderDetails.shippingDetails.name && orderDetails.shippingDetails.address ? `${orderDetails.shippingDetails.name}, ${orderDetails.shippingDetails.address.line1}, ${orderDetails.shippingDetails.address.city}` : 'Ikke tilgjengelig'}</DetailItem>
       </OrderDetails>
     </Container>
   );
