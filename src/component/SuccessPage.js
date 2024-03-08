@@ -44,7 +44,7 @@ const SuccessPage = () => {
     const fetchOrderDetails = async () => {
       try {
         // Update the URL to match your backend endpoint
-        const response = await fetch(`https://your-backend-url/api/order/${sessionId}`);
+        const response = await fetch(`https://holicven-0ef273556045.herokuapp.com/api/order/${sessionId}`);
         if (!response.ok) {
           throw new Error('Failed to fetch order details');
         }
