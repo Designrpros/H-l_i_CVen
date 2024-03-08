@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
+import { db } from '../../firebaseConfig'; // Adjust the import path as necessary
 
 const OrdersContainer = styled.div`
   padding: 20px;
