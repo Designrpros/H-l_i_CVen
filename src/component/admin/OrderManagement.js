@@ -50,15 +50,16 @@ const Checkbox = styled.input`
 `;
 
 const SendButton = styled.button`
-  background-color: #4CAF50; /* Green */
+  background-color: ${props => props.confirmationSent ? '#888' : '#4CAF50'}; /* Gray if sent, otherwise green */
   color: white;
   border: none;
   padding: 5px 10px;
   cursor: pointer;
   &:hover {
-    background-color: #45a049;
+    background-color: ${props => props.confirmationSent ? '#777' : '#45a049'};
   }
 `;
+
 
 const OrderManagement = () => {
   const [orders, setOrders] = useState([]);
@@ -89,11 +90,10 @@ const OrderManagement = () => {
   }, []);
 
   const handleShippedChange = (orderId) => {
-    setOrders(orders.map(order => order.id === orderId ? { ...order, shipped: !order.shipped } : order));
+    setOrders(data.orders.map(order => ({ ...order, shipped: false, confirmationSent: false })));
   };
 
   const handleSendConfirmation = async (orderId) => {
-    // Assuming you have an endpoint set up to handle sending confirmation emails
     const endpoint = `${process.env.REACT_APP_BACKEND_URL}/api/send-confirmation`;
     try {
       const response = await fetch(endpoint, {
@@ -106,12 +106,13 @@ const OrderManagement = () => {
       if (!response.ok) {
         throw new Error('Failed to send confirmation email');
       }
-      // Handle success (e.g., show a success message)
+      // Update the confirmationSent status for the order
+      setOrders(orders.map(order => order.id === orderId ? { ...order, confirmationSent: true } : order));
     } catch (error) {
       console.error('Error sending confirmation email:', error);
-      // Handle error (e.g., show an error message)
     }
   };
+  
   
   
 
@@ -139,8 +140,16 @@ const OrderManagement = () => {
             <TableCell>
                 <Checkbox type="checkbox" checked={order.shipped} onChange={() => handleShippedChange(order.id)} />
               </TableCell>
-                <TableCell><SendButton onClick={() => handleSendConfirmation(order.id)}>Send</SendButton></TableCell>
-                <TableCell>{new Date(order.createdAt._seconds * 1000).toLocaleDateString()}</TableCell>
+              <TableCell>
+                <SendButton
+                  onClick={() => handleSendConfirmation(order.id)}
+                  confirmationSent={order.confirmationSent}
+                  disabled={order.confirmationSent} // Optionally disable the button
+                >
+                  Send
+                </SendButton>
+              </TableCell> 
+               <TableCell>{new Date(order.createdAt._seconds * 1000).toLocaleDateString()}</TableCell>
                 <TableCell>{order.totalAmount / 100} NOK</TableCell>
                 <TableCell>{order.productsPurchased.map(p => p.name).join(', ')}</TableCell>
                 <TableCell>{order.email}</TableCell>
