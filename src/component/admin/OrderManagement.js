@@ -113,6 +113,7 @@ const OrderManagement = () => {
     }
   };
   
+  
 
   if (loading) return <LoadingMsg>Loading orders...</LoadingMsg>;
   if (error) return <ErrorMsg>{error}</ErrorMsg>;
@@ -137,6 +138,7 @@ const OrderManagement = () => {
           <TableRow key={order.id}>
             <TableCell>
                 <Checkbox type="checkbox" checked={order.shipped} onChange={() => handleShippedChange(order.id)} />
+                <SendButton onClick={() => handleSendConfirmation(order.id)}>Send</SendButton>
               </TableCell>
                 <TableCell>{new Date(order.createdAt._seconds * 1000).toLocaleDateString()}</TableCell>
                 <TableCell>{order.totalAmount / 100} NOK</TableCell>
@@ -144,7 +146,6 @@ const OrderManagement = () => {
                 <TableCell>{order.email}</TableCell>
                 <TableCell>{order.id}</TableCell>
               <TableCell>
-              <SendButton onClick={() => handleSendConfirmation(order.id)}>Send</SendButton>
             </TableCell>
           </TableRow>
         ))}
