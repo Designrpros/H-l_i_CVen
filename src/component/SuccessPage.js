@@ -67,7 +67,6 @@ const SuccessPage = () => {
               <li key={index}>{item.name} - Antall: {item.quantity}</li>
             ))}
           </ul>
-          <DetailItem><strong>Leveringsadresse:</strong> {orderDetails.shippingAddress}</DetailItem>
         </OrderDetails>
       ) : (
         <Text>Laster ordredetaljer...</Text>
