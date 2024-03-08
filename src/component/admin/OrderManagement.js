@@ -125,20 +125,20 @@ const OrderManagement = () => {
       <thead>
         <tr>
           <TableHeader>Shipped</TableHeader>
+          <TableHeader>Send Confirmation</TableHeader>
           <TableHeader>Date</TableHeader>
           <TableHeader>Price</TableHeader>
           <TableHeader>Product Name</TableHeader>
           <TableHeader>Customer's Name</TableHeader>
           <TableHeader>Order ID</TableHeader>
-          <TableHeader>Send Confirmation</TableHeader> {/* New column header */}
         </tr>
       </thead>
       <tbody>
         {orders.sort((a, b) => b.createdAt._seconds - a.createdAt._seconds).map((order) => (
           <TableRow key={order.id}>
+              <SendButton onClick={() => handleSendConfirmation(order.id)}>Send</SendButton>
             <TableCell>
                 <Checkbox type="checkbox" checked={order.shipped} onChange={() => handleShippedChange(order.id)} />
-                <SendButton onClick={() => handleSendConfirmation(order.id)}>Send</SendButton>
               </TableCell>
                 <TableCell>{new Date(order.createdAt._seconds * 1000).toLocaleDateString()}</TableCell>
                 <TableCell>{order.totalAmount / 100} NOK</TableCell>
