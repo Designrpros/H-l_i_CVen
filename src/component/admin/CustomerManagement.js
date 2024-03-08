@@ -18,25 +18,22 @@ const CustomerItem = styled.div`
 
 const CustomerManagement = () => {
   const [customers, setCustomers] = useState([]);
-  const [error, setError] = useState('');
 
   useEffect(() => {
     const fetchOrders = async () => {
-      const endpoint = `${process.env.REACT_APP_BACKEND_URL}/api/orders`;
       try {
-        const response = await fetch(endpoint);
+        const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/orders`);
         if (!response.ok) {
-          throw new Error(`Failed to fetch: ${response.status} ${response.statusText}`);
+          throw new Error('Failed to fetch orders');
         }
-        const data = await response.json();
-        const orders = data.orders;
+        const { orders } = await response.json();
 
-        const customersData = orders.reduce((acc, order) => {
-          // Assuming each order has a unique customer identifier
-          const customerId = order.customerId || 'unknown'; // Use a unique identifier for each customer
+        const customerMap = orders.reduce((acc, order) => {
+          // Assuming `customerId` is a field in your order data
+          const { customerId, customerEmail } = order;
           if (!acc[customerId]) {
             acc[customerId] = {
-              email: order.email, // Assuming email is directly on the order
+              email: customerEmail,
               orders: [],
               totalSpent: 0,
             };
@@ -46,24 +43,14 @@ const CustomerManagement = () => {
           return acc;
         }, {});
 
-        // Convert the object back into an array for rendering
-        const customersArray = Object.keys(customersData).map(key => ({
-          ...customersData[key],
-          customerId: key,
-          averageOrderValue: customersData[key].orders.length ? (customersData[key].totalSpent / customersData[key].orders.length) : 0,
-        }));
-
-        setCustomers(customersArray);
+        setCustomers(Object.values(customerMap));
       } catch (error) {
-        setError("Failed to fetch orders. Please try again later.");
-        console.error("Error fetching orders:", error);
+        console.error('Error fetching orders:', error);
       }
     };
 
     fetchOrders();
   }, []);
-
-  if (error) return <p>{error}</p>;
 
   return (
     <Container>
@@ -74,7 +61,6 @@ const CustomerManagement = () => {
             <p>Email: {customer.email}</p>
             <p>Total Spent: {(customer.totalSpent / 100).toFixed(2)} NOK</p>
             <p>Orders: {customer.orders.length}</p>
-            <p>Average Order Value: {(customer.averageOrderValue / 100).toFixed(2)} NOK</p>
           </CustomerItem>
         ))}
       </CustomerList>
