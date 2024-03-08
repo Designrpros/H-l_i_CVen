@@ -139,7 +139,7 @@ const OrderManagement = () => {
             <TableCell>
                 <Checkbox type="checkbox" checked={order.shipped} onChange={() => handleShippedChange(order.id)} />
               </TableCell>
-                <SendButton onClick={() => handleSendConfirmation(order.id)}>Send</SendButton>
+                <TableCell><SendButton onClick={() => handleSendConfirmation(order.id)}>Send</SendButton></TableCell>
                 <TableCell>{new Date(order.createdAt._seconds * 1000).toLocaleDateString()}</TableCell>
                 <TableCell>{order.totalAmount / 100} NOK</TableCell>
                 <TableCell>{order.productsPurchased.map(p => p.name).join(', ')}</TableCell>
