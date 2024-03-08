@@ -43,20 +43,18 @@ const SuccessPage = () => {
   useEffect(() => {
     const fetchOrderDetails = async () => {
       try {
-        const response = await fetch(`/api/order/${sessionId}`);
+        // Update the URL to match your backend endpoint
+        const response = await fetch(`https://your-backend-url/api/order/${sessionId}`);
         if (!response.ok) {
-          throw new Error(`Failed to fetch order details, status: ${response.status}`);
+          throw new Error('Failed to fetch order details');
         }
-        try {
-          const data = await response.json();
-          setOrderDetails(data);
-        } catch (jsonError) {
-          console.error('Error parsing JSON:', jsonError);
-        }
+        const data = await response.json();
+        setOrderDetails(data);
       } catch (error) {
         console.error('Error fetching order details:', error);
       }
-    };    
+    };
+  
     if (sessionId) {
       fetchOrderDetails();
     }
