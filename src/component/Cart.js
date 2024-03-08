@@ -6,6 +6,10 @@ import stripePromise from '../stripe/stripeClient';
 const CartContainer = styled.div`
   margin: 50px 20px;
   padding: 20px;
+  @media (max-width: 768px) {
+    margin: 20px 10px;
+    padding: 10px;
+  }
 `;
 
 const CartTable = styled.table`
@@ -47,7 +51,7 @@ const TotalContainer = styled.div`
 `;
 
 const CheckoutButton = styled.button`
-  background-color: #4CAF50; /* Green */
+  background-color: #4CAF50;
   border: none;
   color: white;
   padding: 15px 32px;
@@ -57,7 +61,21 @@ const CheckoutButton = styled.button`
   font-size: 16px;
   margin: 4px 2px;
   cursor: pointer;
+  width: 100%; // Make the button full width on smaller screens
+  @media (max-width: 768px) {
+    padding: 10px 20px;
+  }
 `;
+const ScrollView = styled.div`
+  overflow-x: auto;
+`;
+
+const CheckoutContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+`;
+
 
 const Cart = () => {
     const { cartItems, removeFromCart } = useCart();
@@ -151,16 +169,17 @@ const Cart = () => {
   return (
     <CartContainer>
       <h2>Handleliste</h2>
+      <ScrollView>
       <CartTable>
-        <thead>
-          <tr>
-            <TableHeader>Name</TableHeader>
-            <TableHeader>Quantity</TableHeader>
-            <TableHeader>Price</TableHeader>
-            <TableHeader>Total Price</TableHeader>
-            <TableHeader>Remove</TableHeader>
-          </tr>
-        </thead>
+      <thead>
+        <tr>
+          <TableHeader>Navn</TableHeader>
+          <TableHeader>Antall</TableHeader>
+          <TableHeader>Pris</TableHeader>
+          <TableHeader>Totalpris</TableHeader>
+          <TableHeader>Fjern</TableHeader>
+        </tr>
+      </thead>
         <tbody>
           {cartItems.map((item) => (
             <TableRow key={item.id}>
@@ -169,16 +188,19 @@ const Cart = () => {
               <TableCell>{item.price}</TableCell>
               <TableCell>{calculateTotalPrice(item.quantity, item.price).toFixed(2)}NOK</TableCell>
               <TableCell>
-                <RemoveButton onClick={() => removeFromCart(item.id)}>Remove</RemoveButton>
+                <RemoveButton onClick={() => removeFromCart(item.id)}>Fjern</RemoveButton>
               </TableCell>
             </TableRow>
           ))}
         </tbody>
       </CartTable>
+      </ScrollView>
       <TotalContainer>
-        <strong>Total: {calculateOverallTotal().toFixed(2)}NOK</strong>
+        <strong>Totalt: {calculateOverallTotal().toFixed(2)} NOK</strong>
       </TotalContainer>
-      <CheckoutButton onClick={handleCheckout}>Proceed to Checkout</CheckoutButton>
+      <CheckoutContainer>
+        <CheckoutButton onClick={handleCheckout}>Betal med Stripe</CheckoutButton>
+      </CheckoutContainer>
     </CartContainer>
   );
 };
