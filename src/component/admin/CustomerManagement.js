@@ -1,6 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { db } from '../../firebaseConfig';
-import { collection, getDocs } from 'firebase/firestore';
 import styled from 'styled-components';
 
 const Container = styled.div`
@@ -20,28 +18,49 @@ const CustomerItem = styled.div`
 
 const CustomerManagement = () => {
   const [customers, setCustomers] = useState([]);
+  const [error, setError] = useState('');
 
   useEffect(() => {
-    const fetchCustomers = async () => {
-      const ordersSnapshot = await getDocs(collection(db, 'orders'));
-      const customers = {};
-      ordersSnapshot.forEach(doc => {
-        const order = doc.data();
-        if (!customers[order.customerId]) {
-          customers[order.customerId] = {
-            email: order.customerEmail, // Ensure this matches your Firestore field
-            orders: [],
-            totalSpent: 0,
-          };
+    const fetchOrders = async () => {
+      const endpoint = `${process.env.REACT_APP_BACKEND_URL}/api/orders`;
+      try {
+        const response = await fetch(endpoint);
+        if (!response.ok) {
+          throw new Error(`Failed to fetch: ${response.status} ${response.statusText}`);
         }
-        customers[order.customerId].orders.push(order);
-        customers[order.customerId].totalSpent += order.totalAmount;
-      });
-      setCustomers(Object.values(customers));
+        const data = await response.json();
+        const orders = data.orders;
+
+        const customersData = {};
+        orders.forEach(order => {
+          const customerId = order.customerId || 'unknown'; // Fallback to 'unknown' if customerId is not set
+          if (!customersData[customerId]) {
+            customersData[customerId] = {
+              email: order.email, // Assuming email is stored directly on the order
+              orders: [],
+              totalSpent: 0,
+            };
+          }
+          customersData[customerId].orders.push(order);
+          customersData[customerId].totalSpent += order.totalAmount;
+        });
+
+        // Additional metrics can be calculated here
+        Object.values(customersData).forEach(customer => {
+          customer.averageOrderValue = customer.orders.length ? (customer.totalSpent / customer.orders.length).toFixed(2) : 0;
+        });
+
+        setCustomers(Object.values(customersData));
+      } catch (error) {
+        setError("Failed to fetch orders. Please try again later.");
+        console.error("Error fetching orders:", error);
+      }
     };
 
-    fetchCustomers();
+    fetchOrders();
   }, []);
+
+  if (error) return <p>{error}</p>;
 
   return (
     <Container>
@@ -50,8 +69,10 @@ const CustomerManagement = () => {
         {customers.map((customer, index) => (
           <CustomerItem key={index}>
             <p>Email: {customer.email}</p>
-            <p>Total Spent: {(customer.totalSpent / 100).toFixed(2)}</p>
+            <p>Total Spent: {(customer.totalSpent / 100).toFixed(2)} NOK</p>
             <p>Orders: {customer.orders.length}</p>
+            <p>Average Order Value: {customer.averageOrderValue} NOK</p>
+            {/* You can add more detailed metrics here */}
           </CustomerItem>
         ))}
       </CustomerList>
