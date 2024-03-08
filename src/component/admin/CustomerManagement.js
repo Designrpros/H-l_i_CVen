@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { db } from '../../firebaseConfig'; // Ensure this import path is correct
+import { collection, getDocs } from "firebase/firestore"; // Import collection and getDocs
 
 const Container = styled.div`
   padding: 20px;
@@ -34,7 +35,7 @@ const CustomerManagement = () => {
       setLoading(true);
       setError('');
       try {
-        const querySnapshot = await db.collection('customers').get();
+        const querySnapshot = await getDocs(collection(db, 'customers'));
         const customersData = querySnapshot.docs.map(doc => ({
           id: doc.id,
           ...doc.data(),
