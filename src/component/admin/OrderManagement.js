@@ -68,30 +68,45 @@ const OrderManagement = () => {
 
   useEffect(() => {
     const fetchOrders = async () => {
-      const endpoint = `${process.env.REACT_APP_BACKEND_URL}/api/orders`;
       setLoading(true);
       setError('');
       try {
-        const response = await fetch(endpoint);
-        if (!response.ok) {
-          throw new Error(`Failed to fetch: ${response.status} ${response.statusText}`);
-        }
-        const data = await response.json();
-        setOrders(data.orders.map(order => ({ ...order, shipped: false }))); // Add 'shipped' property
+        const querySnapshot = await db.collection('orders').get();
+        const fetchedOrders = querySnapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+        setOrders(fetchedOrders.map(order => ({
+          ...order,
+          // Ensure shipped and confirmationSent have defaults if not present
+          shipped: order.shipped || false,
+          confirmationSent: order.confirmationSent || false,
+        })));
       } catch (error) {
-        setError("Failed to fetch orders. Please try again later.");
         console.error("Error fetching orders:", error);
+        setError("Failed to fetch orders. Please try again later.");
       } finally {
         setLoading(false);
       }
     };
-
+  
     fetchOrders();
   }, []);
+  
 
-  const handleShippedChange = (orderId) => {
-    setOrders(orders.map(order => order.id === orderId ? { ...order, shipped: !order.shipped } : order));
+  const handleShippedChange = async (orderId) => {
+    const orderRef = db.collection('orders').doc(orderId);
+    const shippedStatus = orders.find(order => order.id === orderId).shipped;
+    try {
+      await orderRef.update({
+        shipped: !shippedStatus,
+      });
+      setOrders(orders.map(order => order.id === orderId ? { ...order, shipped: !shippedStatus } : order));
+    } catch (error) {
+      console.error("Error updating shipped status:", error);
+    }
   };
+  
   
   const handleSendConfirmation = async (orderId) => {
     const endpoint = `${process.env.REACT_APP_BACKEND_URL}/api/send-confirmation`;
@@ -106,12 +121,17 @@ const OrderManagement = () => {
       if (!response.ok) {
         throw new Error('Failed to send confirmation email');
       }
-      // Update the confirmationSent status for the order
+      // Assuming the email was sent successfully, update Firebase
+      const orderRef = db.collection('orders').doc(orderId);
+      await orderRef.update({
+        confirmationSent: true,
+      });
       setOrders(orders.map(order => order.id === orderId ? { ...order, confirmationSent: true } : order));
     } catch (error) {
       console.error('Error sending confirmation email:', error);
     }
   };
+  
   
   
   
