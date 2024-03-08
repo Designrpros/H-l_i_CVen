@@ -43,8 +43,7 @@ const SuccessPage = () => {
   useEffect(() => {
     const fetchOrderDetails = async () => {
       try {
-        // Update the URL to match your backend endpoint
-        const response = await fetch(`https://holicven-0ef273556045.herokuapp.com/api/order/${sessionId}`);
+        const response = await fetch(`https://holicven-0ef273556045.herokuapp.com/api/order/${sessionId}`); // Use your actual server URL here
         if (!response.ok) {
           throw new Error('Failed to fetch order details');
         }
@@ -54,6 +53,7 @@ const SuccessPage = () => {
         console.error('Error fetching order details:', error);
       }
     };
+    
   
     if (sessionId) {
       fetchOrderDetails();
