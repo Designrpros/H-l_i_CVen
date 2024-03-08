@@ -33,7 +33,12 @@ const DetailItem = styled.p`
 const SuccessPage = () => {
   const location = useLocation();
   const sessionId = new URLSearchParams(location.search).get('session_id');
-  const [orderDetails, setOrderDetails] = useState(null);
+  const [orderDetails, setOrderDetails] = useState({
+    id: '',
+    totalAmount: 0,
+    productsPurchased: [],
+    shippingDetails: { name: '', address: { line1: '', city: '' } }
+  }); // Initialize with default structure
 
   useEffect(() => {
     const fetchOrderDetails = async () => {
@@ -58,19 +63,17 @@ const SuccessPage = () => {
     <Container>
       <Title>Takk for din bestilling!</Title>
       <Text>Transaksjonen var vellykket. Her er detaljene for din bestilling:</Text>
-      {orderDetails && (
-        <OrderDetails>
-          <DetailItem><strong>Ordre-ID:</strong> {orderDetails.id}</DetailItem>
-          <DetailItem><strong>Totalbeløp:</strong> {orderDetails.totalAmount} NOK</DetailItem>
-          <DetailItem><strong>Varer:</strong></DetailItem>
-          <ul>
-            {orderDetails.productsPurchased.map((item, index) => (
-              <li key={index}>{item.name} - Antall: {item.quantity} - Pris per enhet: {item.unitPrice / 100} NOK</li>
-            ))}
-          </ul>
-          <DetailItem><strong>Leveringsadresse:</strong> {orderDetails.shippingDetails ? `${orderDetails.shippingDetails.name}, ${orderDetails.shippingDetails.address.line1}, ${orderDetails.shippingDetails.address.city}` : 'N/A'}</DetailItem>
-        </OrderDetails>
-      )}
+      <OrderDetails>
+        <DetailItem><strong>Ordre-ID:</strong> {orderDetails.id || 'Laster...'}</DetailItem>
+        <DetailItem><strong>Totalbeløp:</strong> {orderDetails.totalAmount ? `${orderDetails.totalAmount} NOK` : 'Laster...'}</DetailItem>
+        <DetailItem><strong>Varer:</strong></DetailItem>
+        <ul>
+          {orderDetails.productsPurchased.length > 0 ? orderDetails.productsPurchased.map((item, index) => (
+            <li key={index}>{item.name} - Antall: {item.quantity} - Pris per enhet: {item.unitPrice / 100} NOK</li>
+          )) : <li>Laster...</li>}
+        </ul>
+        <DetailItem><strong>Leveringsadresse:</strong> {orderDetails.shippingDetails.name ? `${orderDetails.shippingDetails.name}, ${orderDetails.shippingDetails.address.line1}, ${orderDetails.shippingDetails.address.city}` : 'Laster...'}</DetailItem>
+      </OrderDetails>
     </Container>
   );
 };
