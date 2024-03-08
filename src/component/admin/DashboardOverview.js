@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { db } from '../../firebaseConfig'; // Adjust the import path as necessary
+import { db } from '../../firebaseConfig';
 import { collection, getDocs, query, where } from 'firebase/firestore';
 import styled from 'styled-components';
-
 
 const OverviewContainer = styled.div`
   padding: 20px;
@@ -10,7 +9,7 @@ const OverviewContainer = styled.div`
 
 const Header = styled.h2`
   text-align: center;
-  margin-bottom: 40px; // Adjust based on your preference
+  margin-bottom: 40px;
 `;
 
 const WidgetsContainer = styled.div`
@@ -64,44 +63,47 @@ const DashboardOverview = () => {
     customersCount: 0,
     averageOrderValue: 0,
     mostPopularProduct: '',
+    revenueGrowth: null, // Initialized as null to distinguish from 0%
+    topSellingProducts: [],
   });
 
   useEffect(() => {
     const fetchMetrics = async () => {
       try {
+        // Fetch orders and calculate sales and product quantities
         const ordersSnapshot = await getDocs(collection(db, "orders"));
         let totalSales = 0;
-        let productQuantities = {}; // Track quantities for each product
-  
+        let productQuantities = {};
         ordersSnapshot.forEach(doc => {
           const order = doc.data();
-          // Assuming 'totalAmount' is stored as an integer (e.g., 45000 for 450.00 NOK)
-          // Convert it to a proper decimal (e.g., 450.00)
-          const totalAmountCorrected = order.totalAmount / 100; // Correcting the amount
-  
-          console.log(`Order ID: ${doc.id}, Corrected Total Amount: ${totalAmountCorrected} NOK`); // Debugging log
-  
-          totalSales += totalAmountCorrected; // Use the corrected amount for total sales calculation
-  
-          // Aggregate product quantities
+          const totalAmountCorrected = order.totalAmount / 100;
+          totalSales += totalAmountCorrected;
           order.productsPurchased.forEach(product => {
-            if (productQuantities[product.name]) {
-              productQuantities[product.name] += product.quantity;
-            } else {
-              productQuantities[product.name] = product.quantity;
-            }
+            productQuantities[product.name] = (productQuantities[product.name] || 0) + product.quantity;
           });
         });
-  
+
+        // Fetch products and calculate inventory levels
+        const productsSnapshot = await getDocs(collection(db, "products"));
+        let productInventoryLevels = {};
+        productsSnapshot.forEach(doc => {
+          const product = doc.data();
+          productInventoryLevels[product.name] = product.stock;
+        });
+
+        // Calculate revenue growth
+        const lastMonth = new Date();
+        lastMonth.setMonth(lastMonth.getMonth() - 1);
+        const ordersLastMonthSnapshot = await getDocs(query(collection(db, "orders"), where("createdAt", ">", lastMonth)));
+        let lastMonthSales = 0;
+        ordersLastMonthSnapshot.forEach(doc => {
+          lastMonthSales += doc.data().totalAmount / 100;
+        });
+        const revenueGrowth = lastMonthSales > 0 ? ((totalSales - lastMonthSales) / lastMonthSales) * 100 : null;
+
+        // Calculate other metrics
         const ordersCount = ordersSnapshot.size;
-        const averageOrderValue = ordersCount > 0 ? totalSales / ordersCount : 0;
-  
-        // Debugging logs for verification
-        console.log(`Corrected Total Sales (NOK): ${totalSales}`);
-        console.log(`Orders Count: ${ordersCount}`);
-        console.log(`Corrected Average Order Value (NOK): ${averageOrderValue}`);
-  
-        // Identify most popular product
+        const averageOrderValue = totalSales / ordersCount;
         let mostPopularProduct = '';
         let maxQuantity = 0;
         Object.entries(productQuantities).forEach(([product, quantity]) => {
@@ -110,38 +112,42 @@ const DashboardOverview = () => {
             maxQuantity = quantity;
           }
         });
-  
+
         // Fetch customers count
         const customersSnapshot = await getDocs(collection(db, "customers"));
         const customersCount = customersSnapshot.size;
-  
-        // Update state with fetched data
+
+        // Update state with all metrics
         setMetrics({
           totalSales,
           ordersCount,
           customersCount,
           averageOrderValue,
           mostPopularProduct,
+          revenueGrowth,
+          topSellingProducts: Object.entries(productQuantities).sort((a, b) => b[1] - a[1]).slice(0, 3),
         });
       } catch (error) {
         console.error("Failed to fetch metrics:", error);
       }
     };
-  
+
     fetchMetrics();
   }, []);
-  
-  
 
   return (
     <OverviewContainer>
-      <Header>Dashboard</Header>
+      <Header>Dashboard Overview</Header>
       <WidgetsContainer>
         <Widget title="Total Sales" value={`${metrics.totalSales.toFixed(2)} NOK`} />
         <Widget title="Orders" value={metrics.ordersCount} />
         <Widget title="Customers" value={metrics.customersCount} />
         <Widget title="Average Order Value" value={`${metrics.averageOrderValue.toFixed(2)} NOK`} />
+        <Widget title="Revenue Growth" value={metrics.revenueGrowth ? `${metrics.revenueGrowth.toFixed(2)}%` : 'Calculating...'} />
         <Widget title="Most Popular Product" value={metrics.mostPopularProduct} />
+        {metrics.topSellingProducts.map(([productName, quantity], index) => (
+          <Widget key={index} title={`Top ${index + 1}: ${productName}`} value={`Sold: ${quantity}`} />
+        ))}
       </WidgetsContainer>
     </OverviewContainer>
   );

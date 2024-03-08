@@ -23,7 +23,7 @@ const CustomerCard = styled.div`
 `;
 
 const CustomerHeader = styled.div`
-  background-color: #4CAF50;
+  background-color: #9dd2ac;
   color: white;
   padding: 15px 20px;
   display: flex;
@@ -38,14 +38,6 @@ const CustomerInfo = styled.div`
   display: flex;
   flex-direction: column;
   gap: 10px;
-`;
-
-const InfoLabel = styled.span`
-  font-weight: bold;
-`;
-
-const InfoText = styled.span`
-  margin-left: 5px;
 `;
 
 const CustomerList = styled.ul`
