@@ -3,10 +3,10 @@ import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import { collection, getDocs } from 'firebase/firestore';
 import { db } from '../firebaseConfig';
-import Brazil from './img/Brazil.png'; // Placeholder path, replace with your actual icon
-import Colombia from './img/Colombia.png';
+import world from './img/world.png'; // Placeholder path, replace with your actual icon
+
 const Icon = styled.img`
-  width: 50px; /* Adjust size as needed */
+  width: 150px; /* Adjust size as needed */
   height: auto;
   margin-bottom: 10px; /* Space between icon and text */
 `;
@@ -121,8 +121,7 @@ const CoffeeCategories = () => {
       <p>Den Gyldne Bønne as samarbeider med Høl i CVen, og foruten å levere kaffen, bistår vi med vederlagsfri opplæring av deltakerne i programmet.</p>
       <p>Med hilsen, Jørgen Lindvik, Daglig leder Den Gyldne Bønne AS.</p>
       <IconContainer>
-          <Icon src={Colombia} alt="Colombia" />
-          <Icon src={Brazil} alt="Brazil" />
+          <Icon src={world} alt="world" />
         </IconContainer>
       </DescriptionBox>
 
