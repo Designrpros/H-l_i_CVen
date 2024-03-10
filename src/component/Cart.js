@@ -78,8 +78,8 @@ const CheckoutContainer = styled.div`
 
 
 const Cart = () => {
-    const { cartItems, removeFromCart } = useCart();
-    const [address, setAddress] = useState({
+  const { cartItems, removeFromCart, clearCart } = useCart();
+  const [address, setAddress] = useState({
       line1: '',
       line2: '',
       city: '',
