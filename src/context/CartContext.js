@@ -14,6 +14,7 @@ export const CartProvider = ({ children }) => {
       console.error("Could not parse cart items from localStorage", error);
       return [];
     }
+    
   });
 
   // Use useEffect to update local storage when cartItems changes
@@ -40,8 +41,12 @@ export const CartProvider = ({ children }) => {
     setCartItems((prevItems) => prevItems.filter(item => item.id !== productId));
   };
 
-  const clearCart = () => setCartItems([]);
-
+  const clearCart = () => {
+    console.log("Clearing cart...");
+    setCartItems([]);
+    localStorage.removeItem('cartItems');
+  };
+  
   return (
     <CartContext.Provider value={{ cartItems, addToCart, removeFromCart, clearCart }}>
       {children}
