@@ -158,8 +158,12 @@ const Cart = () => {
      });
           
   
-    if (result.error) {
+     if (result.error) {
+      // Handle error
       console.error(result.error.message);
+    } else {
+      // Clear the cart after successful checkout
+      clearCart();
     }
 };
 
