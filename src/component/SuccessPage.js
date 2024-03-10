@@ -1,12 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import styled from 'styled-components';
+import { useCart } from '../context/CartContext'; // Ensure this path is correct
 
 const Container = styled.div`
   max-width: 600px;
   margin: 40px auto;
   padding: 20px;
   text-align: center;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 `;
 
 const Title = styled.h2`
@@ -29,6 +33,9 @@ const DetailItem = styled.p`
   margin: 10px 0;
 `;
 
+const ListItem = styled.li`
+  margin: 5px 0;
+`;
 
 const SuccessPage = () => {
   const location = useLocation();
@@ -38,7 +45,9 @@ const SuccessPage = () => {
     totalAmount: 0,
     productsPurchased: [],
     shippingDetails: { name: '', address: { line1: '', city: '' } }
-  }); // Initialize with default structure
+  });
+
+  const { clearCart } = useCart(); // Use the clearCart function from the cart context
 
   useEffect(() => {
     const fetchOrderDetails = async () => {
@@ -49,16 +58,16 @@ const SuccessPage = () => {
         }
         const data = await response.json();
         setOrderDetails(data);
+        clearCart(); // Clear the cart after successfully fetching order details
       } catch (error) {
         console.error('Error fetching order details:', error);
       }
     };
     
-  
     if (sessionId) {
       fetchOrderDetails();
     }
-  }, [sessionId]);
+  }, [sessionId, clearCart]); // Include clearCart in the dependency array
 
   return (
     <Container>
@@ -70,13 +79,13 @@ const SuccessPage = () => {
         <DetailItem><strong>Varer:</strong></DetailItem>
         <ul>
           {orderDetails.productsPurchased.length > 0 ? orderDetails.productsPurchased.map((item, index) => (
-            <li key={index}>{item.name} - Antall: {item.quantity} - Pris per enhet: {item.unitPrice / 100} NOK</li>
+            <ListItem key={index}>{item.name} - Antall: {item.quantity} - Pris per enhet: {item.unitPrice / 100} NOK</ListItem>
           )) : <li>Laster...</li>}
         </ul>
         <DetailItem><strong>Leveringsadresse:</strong> {orderDetails.shippingDetails && orderDetails.shippingDetails.name && orderDetails.shippingDetails.address ? `${orderDetails.shippingDetails.name}, ${orderDetails.shippingDetails.address.line1}, ${orderDetails.shippingDetails.address.city}` : 'Ikke tilgjengelig'}</DetailItem>
       </OrderDetails>
     </Container>
   );
-}  
+};
 
 export default SuccessPage;
