@@ -4,6 +4,19 @@ import { db, storage } from '../../firebaseConfig'; // Ensure storage is correct
 import { collection, addDoc, getDocs, deleteDoc, doc, getDoc, updateDoc } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage'; // Import necessary functions for handling file uploads
 import SimpleModal from './SimpleModal';
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder'; // Not favorite
+import FavoriteIcon from '@mui/icons-material/Favorite'; // Favorite
+
+const FavoriteButton = styled.button`
+  position: absolute; /* Position the button absolutely within ProductCard */
+  top: 0; /* Align to the top of ProductCard */
+  right: 0; /* Align to the right of ProductCard */
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 10px; /* Add some padding for easier clicking */
+  z-index: 10; /* Ensure the button is above other content */
+`;
 
 const AdminContainer = styled.div`
   padding: 20px;
@@ -22,6 +35,7 @@ const ProductsContainer = styled.div`
 `;
 
 const ProductCard = styled.div`
+  position: relative; /* Establish a positioning context for absolute positioning */
   text-align: center;
   border: 2px solid;
   box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.2);
@@ -81,7 +95,8 @@ const ProductManagement = () => {
     altitude: '',
     process: '',
     tasteNotes: '',
-    image: ''
+    image: '',
+    favorite: false,
   });
 
   const [editMode, setEditMode] = useState(false);
@@ -198,6 +213,14 @@ const ProductManagement = () => {
         console.error("Error adding product:", error);
       }
     };
+
+    // Toggle favorite status function
+    const toggleFavorite = async (id, currentStatus) => {
+      await updateDoc(doc(db, "products", id), {
+        favorite: !currentStatus,
+      });
+      fetchProducts(); // Re-fetch products to reflect the change
+    };
     
 
   return (
@@ -234,21 +257,27 @@ const ProductManagement = () => {
         </ProductForm>
       </SimpleModal>
       <ProductsContainer>
-        {products.map(({ id, name, description, image }) => (
-          <ProductCard key={id} onContextMenu={(e) => {
+        {products.map((product) => ( // Ensure you're using 'product' from the map function
+          <ProductCard key={product.id} onContextMenu={(e) => {
             e.preventDefault();
             const action = prompt("Type 'delete' to delete or 'edit' to edit this product:");
             if (action === 'delete') {
-              handleDeleteProduct(id);
+              handleDeleteProduct(product.id);
             } else if (action === 'edit') {
-              startEditProduct(id);
+              startEditProduct(product.id);
             }
           }}>
-            <img src={image || `${process.env.PUBLIC_URL}/images/holicvenlogo.png`} alt={name} />
+            <img src={product.image || `${process.env.PUBLIC_URL}/images/holicvenlogo.png`} alt={product.name} />
             <div>
-              <h3>{name}</h3>
-              <p>{description}</p>
+              <h3>{product.name}</h3>
+              <p>{product.description}</p>
             </div>
+            <FavoriteButton onClick={(e) => {
+              e.stopPropagation(); // Prevent triggering the context menu
+              toggleFavorite(product.id, product.favorite); // Access 'favorite' directly from 'product'
+            }}>
+              {product.favorite ? <FavoriteIcon /> : <FavoriteBorderIcon />}
+            </FavoriteButton>
           </ProductCard>
         ))}
       </ProductsContainer>

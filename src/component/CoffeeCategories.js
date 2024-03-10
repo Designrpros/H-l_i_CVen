@@ -3,12 +3,12 @@ import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import { collection, getDocs } from 'firebase/firestore';
 import { db } from '../firebaseConfig';
-import world from './img/world.png'; // Placeholder path, replace with your actual icon
+import { useDescriptionBox } from '../context/DescriptionBoxContext'; // Adjust the import path as necessary
+import world from './img/world.png';
 
 const Icon = styled.img`
   width: 150px; /* Adjust size as needed */
   height: auto;
-  margin-bottom: 10px; /* Space between icon and text */
 `;
 
 
@@ -80,47 +80,65 @@ const DescriptionBox = styled.div`
   line-height: 1.6; /* Improves readability */
 `;
 
+
+const DynamicParagraph = styled.p`
+  text-align: ${({ alignment }) => alignment || 'left'};
+  font-weight: ${({ bold }) => (bold ? 'bold' : 'normal')};
+  color: ${({ color }) => color || '#333'};
+  padding: ${({ padding }) => `0 ${padding}px`};
+`;
+
 const IconContainer = styled.div`
   display: flex;
   justify-content: center;
   gap: 20px; // Adjust the gap as needed
-  margin-bottom: 20px;
+  margin-top: 20px;
 `;
 
 const CoffeeCategories = () => {
   let navigate = useNavigate();
   const [products, setProducts] = useState([]);
+  const { descriptionContent } = useDescriptionBox(); // Use the context
 
-  useEffect(() => {
-    const fetchProducts = async () => {
-      const querySnapshot = await getDocs(collection(db, "products"));
-      const productsArray = querySnapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      }));
-      setProducts(productsArray);
-    };
+      useEffect(() => {
+        const fetchFavoriteProducts = async () => {
+          const querySnapshot = await getDocs(collection(db, "products"));
+          const productsArray = querySnapshot.docs
+            .map(doc => ({ id: doc.id, ...doc.data() }))
+            .filter(product => product.favorite); // Filter for favorite products
+          setProducts(productsArray);
+        };
 
-    fetchProducts();
-  }, []);
+        fetchFavoriteProducts();
+      }, []);
 
-  // Assuming you want to display specific categories, you might filter them here
-  // For demonstration, this example will display all fetched products
-  const displayedProducts = products.slice(0, 3); // Adjust this line if you need specific filtering
+
+  const displayedProducts = products //.slice(0, 3); // Adjust this line if you need specific filtering
 
   return (
     <SectionWrapper id="sustainable-coffee">
       <Title>BÆREDYKTIG KAFFE</Title>
-      {/* DescriptionBox content remains unchanged */}
       <DescriptionBox>
-      <p>Som sin kaffeleverandør har Høl i CVen valgt Den Gyldne Bønne as, et lokalt foretak som i snart 25 år har importert, brent og solgt kaffe til folk og bedrifter.</p>
-      <p>Den Gyldne Bønne as markedsfører nybrente kaffespesialiteter fra hele verden og råvarene er et representativt utvalg av spesialiteter og variasjoner fra de fleste kaffeproduserende land. Kaffen foredles håndverksmessig i eget brenneri på Vøyenenga i Bærum.</p>
-      <p>Vi påstår at kunnskap og kvalitet er veien til et bedre liv uansett bransje og hvor enn man er i verden. Kvalitet koster heller ikke så mye mer og verdsettes i stor grad av opplyste forbrukere. At bedre kaffe er til å betale for de aller fleste, kan illustreres ved at kaffekostnaden i en kopp med verdens dyreste kaffe utgjør omtrent kr. 25,00. Altså ikke mer enn en flaske vann på bensinstasjonen!</p>
-      <p>Vi som vet hvilket arbeid som ligger bak en god kopp kaffe, helt fra bonden i f.eks. Colombia til den serveres i Høl i CVens kaffevogn i Sandvika, mener at de fleste både har råd til og fortjener en riktig god kopp kaffe.</p>
-      <p>Det er riktig og rettferdig å betale godt for god kvalitet, og det er mer konstruktivt og langsiktig enn å drive veldedighet. Vi arbeider hver dag for å heve interessen for kvaliteten på produktene som vi er så glade i og kanskje aldri så lite avhengige av.</p>
-      <p>Den Gyldne Bønne as samarbeider med Høl i CVen, og foruten å levere kaffen, bistår vi med vederlagsfri opplæring av deltakerne i programmet.</p>
-      <p>Med hilsen, Jørgen Lindvik, Daglig leder Den Gyldne Bønne AS.</p>
-      <IconContainer>
+        {descriptionContent.elements.map((element, index) => {
+          switch (element.type) {
+            case 'paragraph':
+              return (
+                <DynamicParagraph
+                  key={index}
+                  alignment={element.alignment}
+                  bold={element.bold}
+                  color={element.color}
+                  padding={element.padding}
+                >
+                  {element.text}
+                </DynamicParagraph>
+              );
+            // Handle other types (h1, h2, h3) similarly
+            default:
+              return null;
+          }
+        })}
+        <IconContainer>
           <Icon src={world} alt="world" />
         </IconContainer>
       </DescriptionBox>
@@ -129,7 +147,6 @@ const CoffeeCategories = () => {
       <CategoriesWrapper>
         {displayedProducts.map(({ id, name, description, image }) => (
           <ProductCard key={id} onClick={() => navigate(`/product/${id}`)}>
-            {/* Use the image URL directly if it's stored in Firestore */}
             <img src={image || `${process.env.PUBLIC_URL}/images/holicvenlogo.png`} alt={name} />
             <div className="card-content">
               <h3 className="card-title">{name}</h3>

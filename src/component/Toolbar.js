@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react'; // Import useContext
 import styled from 'styled-components';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import checkoutIcon from './img/Checkout.png'; // Adjust the path as necessary
 import logo from '../logo.png'; // Adjust the path as necessary
 import { useCart } from '../context/CartContext'; // Ensure this import is correct
+// Make sure the path to AuthContext is correct
 
 const Nav = styled.nav`
   position: fixed;
@@ -136,13 +137,16 @@ const Toolbar = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
   };
 
+  
   return (
     <Nav>
+
       <Logo>
         <Link to="/">
           <img src={logo} alt="Logo" />
         </Link>
       </Logo>
+
       <NavigationItems isVisible={isHomePage}>
         <a href="#home">Hjem</a>
         <a href="#who-we-are">Hvem er vi</a>
@@ -150,10 +154,12 @@ const Toolbar = () => {
         <a href="#gallery">Galleri</a>
         <a href="#contact">Kontakt</a>
       </NavigationItems>
+
       <RightItemsContainer>
         <ProdukterButton>
           <Link to="/products">Produkter</Link>
         </ProdukterButton>
+
         {cartItemCount > 0 && (
           <CartIconContainer>
             <Link to="/cart">
@@ -162,6 +168,8 @@ const Toolbar = () => {
             </Link>
           </CartIconContainer>
         )}
+
+
         {/* Only render the MobileIcon if on the homepage */}
         {isHomePage && (
           <MobileIcon onClick={toggleMobileMenu}>☰</MobileIcon>

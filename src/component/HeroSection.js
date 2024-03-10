@@ -1,12 +1,10 @@
 import React from 'react';
 import styled from 'styled-components';
+import { useHeroSection } from '../context/HeroSectionContext';
 import Slider from 'react-slick';
-import logoImage from './img/HØL_I_CVEN_GRØNN.png';
+import "slick-carousel/slick/slick.css"; 
+import "slick-carousel/slick/slick-theme.css";
 
-// Importing all images for the slider
-import image2 from './img/Truck.webp';
-import image3 from './img/alle.webp';
-import image4 from './img/Erna.webp';
 
 const HeroWrapper = styled.div`
   background-color: #fff;
@@ -44,14 +42,17 @@ const ImageSlider = styled(Slider)`
 `;
 
 const HeroSection = () => {
+  const { heroContent } = useHeroSection();
+  const { logoUrl, headline, sliderImages } = heroContent;
+
   return (
     <HeroWrapper id="home">
-      <Logo src={logoImage} alt="HØL I CVEN" />
-      <h4>Knallgod kaffe med mening</h4>
+      <Logo src={logoUrl} alt="Logo" />
+      <h4>{headline}</h4>
       <ImageSlider {...sliderSettings}>
-        <img src={image2} alt="Truck" />
-        <img src={image3} alt="Erna" />
-        <img src={image4} alt="Erna" />
+        {sliderImages.map((image, index) => (
+          <img key={index} src={image} alt={`Slide ${index}`} />
+        ))}
       </ImageSlider>
     </HeroWrapper>
   );

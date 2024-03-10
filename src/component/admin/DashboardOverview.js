@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { db } from '../../firebaseConfig';
 import { collection, getDocs, query, where } from 'firebase/firestore';
 import styled from 'styled-components';
+import { useAuth } from '../../context/AuthContext';
 
 const OverviewContainer = styled.div`
   padding: 20px;
@@ -9,7 +10,7 @@ const OverviewContainer = styled.div`
 
 const Header = styled.h2`
   text-align: center;
-  margin-bottom: 40px;
+  margin-bottom: 20px;
 `;
 
 const WidgetsContainer = styled.div`
@@ -48,6 +49,26 @@ const WidgetValue = styled.div`
   font-weight: bold;
   color: #4a90e2;
 `;
+
+const LogoutButtonContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  margin-bottom: 40px; /* Added more space to the bottom */
+`;
+
+const LogoutButton = styled.button`
+  padding: 10px 20px;
+  background-color: #f44336;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #d32f2f;
+  }
+`;
+
 
 const Widget = ({ title, value }) => (
   <WidgetContainer>
@@ -135,9 +156,14 @@ const DashboardOverview = () => {
     fetchMetrics();
   }, []);
 
+  const { logout } = useAuth();
+
   return (
     <OverviewContainer>
       <Header>Dashboard Overview</Header>
+      <LogoutButtonContainer>
+        <LogoutButton onClick={logout}>Logout</LogoutButton>
+      </LogoutButtonContainer>
       <WidgetsContainer>
         <Widget title="Total Sales" value={`${metrics.totalSales.toFixed(2)} NOK`} />
         <Widget title="Orders" value={metrics.ordersCount} />

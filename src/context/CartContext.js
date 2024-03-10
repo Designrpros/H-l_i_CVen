@@ -1,12 +1,25 @@
-// src/context/CartContext.js
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 
 const CartContext = createContext();
 
 export const useCart = () => useContext(CartContext);
 
 export const CartProvider = ({ children }) => {
-  const [cartItems, setCartItems] = useState([]);
+  // Initialize cartItems state with items from local storage if available
+  const [cartItems, setCartItems] = useState(() => {
+    try {
+      const items = localStorage.getItem('cartItems');
+      return items ? JSON.parse(items) : [];
+    } catch (error) {
+      console.error("Could not parse cart items from localStorage", error);
+      return [];
+    }
+  });
+
+  // Use useEffect to update local storage when cartItems changes
+  useEffect(() => {
+    localStorage.setItem('cartItems', JSON.stringify(cartItems));
+  }, [cartItems]);
 
   const addToCart = (product) => {
     setCartItems((prevItems) => {

@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import { useContact } from '../context/ContactContext'; // Adjust the path as necessary
 import facebookIcon from './img/facebook.svg'; // Update the path as necessary
 import instagramIcon from './img/instagram.webp'; // Update the path as necessary
 
@@ -97,13 +98,16 @@ const SocialIcon = styled.img`
 `;
 
 const ContactSection = () => {
+  const { contactInfo } = useContact(); // Destructure to get contactInfo
+
   return (
     <Section id="contact">
       <SectionTitle>Kontakt Oss</SectionTitle>
-      <MessageText>Ønsker dere knallgod kaffe med mening, eller å starte opp en Høl i CVen Truck eller Cafe i deres kommune ved å bruke våres konsept. Ta gjerne kontakt :)</MessageText>
+      {/* Use contactInfo.description here */}
+      <MessageText>{contactInfo.description}</MessageText>
       <ContactInfoContainer>
-        <ContactButton href="mailto:contact@example.com">Email: contact@example.com</ContactButton>
-        <ContactButton href="tel:+4790258682">Telefon: +47 90258682</ContactButton>
+        <ContactButton href={`mailto:${contactInfo.email}`}>{contactInfo.email}</ContactButton>
+        <ContactButton href={`tel:${contactInfo.phone}`}>{contactInfo.phone}</ContactButton>
       </ContactInfoContainer>
       <IconContainer>
         <IconLink href="https://www.facebook.com/holivcen/" target="_blank" rel="noopener noreferrer">
@@ -111,12 +115,11 @@ const ContactSection = () => {
         </IconLink>
         <IconLink href="https://www.instagram.com/holicven/" target="_blank" rel="noopener noreferrer">
           <SocialIcon src={instagramIcon} alt="Instagram" />
-        </IconLink>
-      </IconContainer>
+        </IconLink>      </IconContainer>
       <MapContainer>
         <StyledIframe
-          title="Sandvika, Norway"
-          src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d7961.917753982422!2d10.5276898!3d59.8887301!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNTnCsDUzJzE5LjAiTiAxMMKwMzEnMzkuNyJF!5e0!3m2!1sen!2sus!4v1664292423496!5m2!1sen!2sus"
+          title="Location"
+          src={contactInfo.mapUrl}
           allowFullScreen=""
           loading="lazy"
           referrerPolicy="no-referrer-when-downgrade">
@@ -125,5 +128,6 @@ const ContactSection = () => {
     </Section>
   );
 };
+
 
 export default ContactSection;

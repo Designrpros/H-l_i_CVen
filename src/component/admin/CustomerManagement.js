@@ -115,46 +115,35 @@ const OrdersContainer = styled.div`
 `;
 
 
-
-
-
 const CustomerManagement = () => {
   const [customers, setCustomers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [visibleOrders, setVisibleOrders] = useState({}); // Tracks visibility of orders for each customer
+  const [visibleOrders, setVisibleOrders] = useState({});
 
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
       setError('');
       try {
-        // Fetch customers
         const customersSnapshot = await getDocs(collection(db, 'customers'));
-        const customersData = customersSnapshot.docs.map(doc => ({
+        let customersData = customersSnapshot.docs.map(doc => ({
           id: doc.id,
           ...doc.data(),
         }));
-        console.log("Fetched Customers Data:", customersData); // Log fetched customers data
-  
-        // Fetch orders
+
         const ordersSnapshot = await getDocs(collection(db, 'orders'));
         const ordersData = ordersSnapshot.docs.map(doc => ({
           id: doc.id,
           ...doc.data(),
         }));
-        console.log("Fetched Orders Data:", ordersData); // Log fetched orders data
-  
-        // Correctly map orders to their respective customers
-        const customersWithOrders = customersData.map(customer => ({
-          ...customer,
-          orders: ordersData.filter(order => order.email === customer.email), // Use order.email to match
-        }));
 
-  
-        console.log("Customers with Orders:", customersWithOrders); // Log customers with their orders
-  
-        setCustomers(customersWithOrders);
+        customersData = customersData.map(customer => ({
+          ...customer,
+          orders: ordersData.filter(order => order.email === customer.email),
+        })).sort((a, b) => b.orders.length - a.orders.length); // Sort customers by order count
+
+        setCustomers(customersData);
       } catch (error) {
         console.error('Error fetching data:', error);
         setError('Failed to load data.');
@@ -162,7 +151,7 @@ const CustomerManagement = () => {
         setLoading(false);
       }
     };
-  
+
     fetchData();
   }, []);
 
@@ -171,10 +160,7 @@ const CustomerManagement = () => {
       ...prev,
       [customerId]: !prev[customerId]
     }));
-    console.log(`Toggled visibility for ${customerId}:`, !visibleOrders[customerId]);
   };
-  
-  
 
   if (loading) return <Container>Loading...</Container>;
   if (error) return <Container>Error: {error}</Container>;
@@ -182,50 +168,48 @@ const CustomerManagement = () => {
   return (
     <Container>
       <h1>Customer Management</h1>
-      <CustomerList>
-        {customers.map((customer) => (
-          <CustomerCard key={customer.id}>
-            <CustomerHeader>
-              <div>Email: {customer.email}</div>
-              <ToggleButton onClick={() => toggleOrdersVisibility(customer.id)}>
-                {visibleOrders[customer.id] ? 'Hide Orders' : 'Show Orders'}
-              </ToggleButton>
-            </CustomerHeader>
-            <CustomerInfo>
-              <InfoGroup>
-                <Label>Total Spent:</Label>
-                <Value>{(customer.totalSpent / 100).toFixed(2)} NOK</Value>
-              </InfoGroup>
-              <InfoGroup>
-                <Label>Orders:</Label>
-                <Value>{customer.orders.length}</Value>
-              </InfoGroup>
-            </CustomerInfo>
-            <OrdersContainer isOpen={visibleOrders[customer.id]}>
-              <ScrollView>
-                <OrdersTable isOpen={visibleOrders[customer.id]}>
-                  <thead>
-                    <tr>
-                      <TableHeader>Date</TableHeader>
-                      <TableHeader>Products</TableHeader>
-                      <TableHeader>Total Price</TableHeader>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {customer.orders.map(order => (
-                      <TableRow key={order.id}>
-                        <TableCell>{new Date(order.createdAt.seconds * 1000).toLocaleDateString()}</TableCell>
-                        <TableCell>{order.productsPurchased.map(p => p.name).join(', ')}</TableCell>
-                        <TableCell>{(order.totalAmount / 100).toFixed(2)} NOK</TableCell>
-                      </TableRow>
-                    ))}
-                  </tbody>
-                </OrdersTable>
-              </ScrollView>
-            </OrdersContainer>
-          </CustomerCard>
-        ))}
-      </CustomerList>
+      {customers.map((customer) => (
+        <CustomerCard key={customer.id}>
+          <CustomerHeader>
+            <div>Email: {customer.email}</div>
+            <ToggleButton onClick={() => toggleOrdersVisibility(customer.id)}>
+              {visibleOrders[customer.id] ? 'Hide Orders' : 'Show Orders'}
+            </ToggleButton>
+          </CustomerHeader>
+          <CustomerInfo>
+            <InfoGroup>
+              <Label>Total Spent:</Label>
+              <Value>{(customer.totalSpent / 100).toFixed(2)} NOK</Value>
+            </InfoGroup>
+            <InfoGroup>
+              <Label>Orders:</Label>
+              <Value>{customer.orders.length}</Value>
+            </InfoGroup>
+          </CustomerInfo>
+          <OrdersContainer isOpen={visibleOrders[customer.id]}>
+            <ScrollView>
+              <OrdersTable isOpen={visibleOrders[customer.id]}>
+                <thead>
+                  <tr>
+                    <TableHeader>Date</TableHeader>
+                    <TableHeader>Products</TableHeader>
+                    <TableHeader>Total Price</TableHeader>
+                  </tr>
+                </thead>
+                <tbody>
+                  {customer.orders.map(order => (
+                    <TableRow key={order.id}>
+                      <TableCell>{new Date(order.createdAt.seconds * 1000).toLocaleDateString()}</TableCell>
+                      <TableCell>{order.productsPurchased.map(p => p.name).join(', ')}</TableCell>
+                      <TableCell>{(order.totalAmount / 100).toFixed(2)} NOK</TableCell>
+                    </TableRow>
+                  ))}
+                </tbody>
+              </OrdersTable>
+            </ScrollView>
+          </OrdersContainer>
+        </CustomerCard>
+      ))}
     </Container>
   );
 };

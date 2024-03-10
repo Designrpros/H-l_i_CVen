@@ -52,3 +52,14 @@ body, html {
   padding: 0;
   overflow-x: hidden;
 }
+
+
+.slick-slide img {
+  display: block; /* Ensures images are block-level elements */
+  margin: 0 auto; /* Center images if they are smaller than the slide */
+  max-width: 100%; /* Ensures images do not exceed the slide's width */
+  height: auto; /* Maintains aspect ratio */
+}
+
+
+

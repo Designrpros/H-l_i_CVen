@@ -1,4 +1,3 @@
-import { handle } from '@vercel/node';
 import Stripe from 'stripe';
 
 // Replace with your actual Stripe secret key
