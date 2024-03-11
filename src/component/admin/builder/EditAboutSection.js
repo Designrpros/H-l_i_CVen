@@ -14,6 +14,7 @@ import {
   Box,
   Typography,
   Slider,
+  Container, // Import Container for consistent max-width and centering
 } from '@mui/material';
 import { SketchPicker } from 'react-color';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
@@ -32,6 +33,10 @@ const EditAboutSection = () => {
   const { aboutContent, saveAboutContent } = useAboutSection();
   const [localContent, setLocalContent] = useState(aboutContent);
   const [showColorPicker, setShowColorPicker] = useState(false);
+
+  useEffect(() => {
+    setLocalContent(aboutContent);
+  }, [aboutContent]);
 
   const handleSectionChange = (index, field, value) => {
     const updatedSections = [...localContent.sections];
@@ -63,13 +68,8 @@ const EditAboutSection = () => {
     saveAboutContent(localContent);
   };
 
-  // Update local state when aboutContent changes
-  useEffect(() => {
-    setLocalContent(aboutContent);
-  }, [aboutContent]);
-
   return (
-    <Box>
+    <Container maxWidth="md"> {/* Use Container for consistent max-width and centering */}
       <TextField
         label="Heading"
         name="heading"
@@ -119,7 +119,7 @@ const EditAboutSection = () => {
                 />
               </FormGroup>
               <Box sx={{ ml: 2, width: 100 }}>
-                <Typography gutterbottom>Padding</Typography>
+                <Typography gutterBottom>Padding</Typography>
                 <Slider
                   value={section.padding}
                   onChange={(e, newValue) => handleSectionChange(index, 'padding', newValue)}
@@ -152,7 +152,7 @@ const EditAboutSection = () => {
       <Button onClick={handleSave} variant="contained" color="secondary" style={{ marginLeft: '10px' }}>
         Save
       </Button>
-    </Box>
+    </Container>
   );
 };
 

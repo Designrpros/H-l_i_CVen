@@ -16,20 +16,35 @@ const AboutWrapper = styled.section`
   align-items: center;
   width: 100%;
   margin: auto;
+  max-width: 100%;
+
+  @media (max-width: 768px) {
+    padding: 30px 10px;
+  }
 `;
 
+
 const StyledElement = styled.div`
-  box-sizing: border-box; /* Ensure padding is included in the element's width */
-  width: 100%;
+  box-sizing: border-box;
+  width: 90%;
   text-align: ${({ alignment }) => alignment || 'left'};
   ${({ type }) => typeStyles(type)}
   ${({ bold }) => bold && css`font-weight: bold;`}
   ${({ color }) => css`color: ${color};`}
   margin-bottom: 20px;
-  padding: 0 ${({ padding }) => padding}px; /* Apply horizontal padding */
-  max-width: 100%;
+  padding: 5px ${({ padding }) => padding}px;
+  max-width: 800px; // Example max-width, adjust as needed
+  margin: auto; // Center the element
   overflow-wrap: break-word;
+
+  transition: transform 0.3s ease;
+
+  &:hover {
+    transform: translateY(-5px);
+  }
 `;
+
+
 
 // Helper function for type styles to clean up the StyledElement
 const typeStyles = (type) => css`
