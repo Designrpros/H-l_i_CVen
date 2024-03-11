@@ -119,21 +119,17 @@ const CoffeeCategories = () => {
     <SectionWrapper id="sustainable-coffee">
       <Title>BÆREDYKTIG KAFFE</Title>
       <DescriptionBox>
-        {descriptionContent.elements.map((element, index) => {
+      {descriptionContent.elements.map((element, index) => {
           switch (element.type) {
+            case 'h1':
+              return <h1 key={index} style={{ textAlign: element.alignment, fontWeight: element.bold ? 'bold' : 'normal', color: element.color, padding: `0 ${element.padding}px` }}>{element.text}</h1>;
+            case 'h2':
+              return <h2 key={index} style={{ textAlign: element.alignment, fontWeight: element.bold ? 'bold' : 'normal', color: element.color, padding: `0 ${element.padding}px` }}>{element.text}</h2>;
+            case 'h3':
+              return <h3 key={index} style={{ textAlign: element.alignment, fontWeight: element.bold ? 'bold' : 'normal', color: element.color, padding: `0 ${element.padding}px` }}>{element.text}</h3>;
             case 'paragraph':
-              return (
-                <DynamicParagraph
-                  key={index}
-                  alignment={element.alignment}
-                  bold={element.bold}
-                  color={element.color}
-                  padding={element.padding}
-                >
-                  {element.text}
-                </DynamicParagraph>
-              );
-            // Handle other types (h1, h2, h3) similarly
+              return <DynamicParagraph key={index} alignment={element.alignment} bold={element.bold} color={element.color} padding={element.padding}>{element.text}</DynamicParagraph>;
+            // Handle other types similarly
             default:
               return null;
           }
